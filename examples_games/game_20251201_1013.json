@@ -1,0 +1,1570 @@
+{
+  "log_version": "2.0.0",
+  "metadata": {
+    "random_seed": null,
+    "game_settings": {
+      "player1": "Player 1",
+      "player2": "Player 2",
+      "theme": "Real Stone"
+    }
+  },
+  "turn_sequence": [
+    {
+      "turn_id": 1,
+      "state_t": {
+        "grid_size": 19,
+        "territory_threshold": 0.8,
+        "player_energy": {
+          "1": 6,
+          "2": 6
+        },
+        "stones": {
+          "12,8": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          }
+        },
+        "player_captures": {
+          "1": 4,
+          "2": 3
+        },
+        "game_over": false,
+        "winner": null,
+        "victory_reason": "",
+        "total_time_limit": 0,
+        "move_time_limit": 30,
+        "player_time_remaining": {
+          "1": 0.0,
+          "2": 0.0
+        },
+        "current_move_time_remaining": 26.299999999999947
+      },
+      "agent_action": {
+        "type": "place",
+        "params": {
+          "position": [
+            12,
+            8
+          ],
+          "stone_type": "SPLITTER",
+          "player": 2
+        }
+      },
+      "reward_t": 0.0,
+      "terminal": false,
+      "event_log": [
+        "Player 2 placed SPLITTER at (12, 8)",
+        "Score: P1=0, P2=0"
+      ]
+    },
+    {
+      "turn_id": 2,
+      "state_t": {
+        "grid_size": 19,
+        "territory_threshold": 0.8,
+        "player_energy": {
+          "1": 6,
+          "2": 6
+        },
+        "stones": {
+          "12,8": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "9,7": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          }
+        },
+        "player_captures": {
+          "1": 4,
+          "2": 3
+        },
+        "game_over": false,
+        "winner": null,
+        "victory_reason": "",
+        "total_time_limit": 0,
+        "move_time_limit": 30,
+        "player_time_remaining": {
+          "1": 0.0,
+          "2": 0.0
+        },
+        "current_move_time_remaining": 29.599999999999994
+      },
+      "agent_action": {
+        "type": "place",
+        "params": {
+          "position": [
+            9,
+            7
+          ],
+          "stone_type": "SPLITTER",
+          "player": 1
+        }
+      },
+      "reward_t": 0.0,
+      "terminal": false,
+      "event_log": [
+        "Player 1 placed SPLITTER at (9, 7)",
+        "Score: P1=0, P2=0"
+      ]
+    },
+    {
+      "turn_id": 3,
+      "state_t": {
+        "grid_size": 19,
+        "territory_threshold": 0.8,
+        "player_energy": {
+          "1": 6,
+          "2": 6
+        },
+        "stones": {
+          "12,8": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "9,7": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          },
+          "12,6": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          }
+        },
+        "player_captures": {
+          "1": 4,
+          "2": 3
+        },
+        "game_over": false,
+        "winner": null,
+        "victory_reason": "",
+        "total_time_limit": 0,
+        "move_time_limit": 30,
+        "player_time_remaining": {
+          "1": 0.0,
+          "2": 0.0
+        },
+        "current_move_time_remaining": 27.499999999999964
+      },
+      "agent_action": {
+        "type": "place",
+        "params": {
+          "position": [
+            12,
+            6
+          ],
+          "stone_type": "SPLITTER",
+          "player": 2
+        }
+      },
+      "reward_t": 0.0,
+      "terminal": false,
+      "event_log": [
+        "Player 2 placed SPLITTER at (12, 6)",
+        "Score: P1=0, P2=0"
+      ]
+    },
+    {
+      "turn_id": 4,
+      "state_t": {
+        "grid_size": 19,
+        "territory_threshold": 0.8,
+        "player_energy": {
+          "1": 6,
+          "2": 6
+        },
+        "stones": {
+          "12,8": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "9,7": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          },
+          "12,6": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "10,6": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          }
+        },
+        "player_captures": {
+          "1": 4,
+          "2": 3
+        },
+        "game_over": false,
+        "winner": null,
+        "victory_reason": "",
+        "total_time_limit": 0,
+        "move_time_limit": 30,
+        "player_time_remaining": {
+          "1": 0.0,
+          "2": 0.0
+        },
+        "current_move_time_remaining": 29.599999999999994
+      },
+      "agent_action": {
+        "type": "place",
+        "params": {
+          "position": [
+            10,
+            6
+          ],
+          "stone_type": "SPLITTER",
+          "player": 1
+        }
+      },
+      "reward_t": 0.0,
+      "terminal": false,
+      "event_log": [
+        "Player 1 placed SPLITTER at (10, 6)",
+        "Score: P1=0, P2=0"
+      ]
+    },
+    {
+      "turn_id": 5,
+      "state_t": {
+        "grid_size": 19,
+        "territory_threshold": 0.8,
+        "player_energy": {
+          "1": 6,
+          "2": 6
+        },
+        "stones": {
+          "12,8": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "9,7": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          },
+          "12,6": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "10,6": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          },
+          "9,5": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          }
+        },
+        "player_captures": {
+          "1": 4,
+          "2": 3
+        },
+        "game_over": false,
+        "winner": null,
+        "victory_reason": "",
+        "total_time_limit": 0,
+        "move_time_limit": 30,
+        "player_time_remaining": {
+          "1": 0.0,
+          "2": 0.0
+        },
+        "current_move_time_remaining": 28.799999999999983
+      },
+      "agent_action": {
+        "type": "place",
+        "params": {
+          "position": [
+            9,
+            5
+          ],
+          "stone_type": "SPLITTER",
+          "player": 2
+        }
+      },
+      "reward_t": 0.0,
+      "terminal": false,
+      "event_log": [
+        "Player 2 placed SPLITTER at (9, 5)",
+        "Score: P1=0, P2=0"
+      ]
+    },
+    {
+      "turn_id": 6,
+      "state_t": {
+        "grid_size": 19,
+        "territory_threshold": 0.8,
+        "player_energy": {
+          "1": 6,
+          "2": 6
+        },
+        "stones": {
+          "12,8": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "9,7": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          },
+          "12,6": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "10,6": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          },
+          "9,5": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "9,6": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          }
+        },
+        "player_captures": {
+          "1": 4,
+          "2": 3
+        },
+        "game_over": false,
+        "winner": null,
+        "victory_reason": "",
+        "total_time_limit": 0,
+        "move_time_limit": 30,
+        "player_time_remaining": {
+          "1": 0.0,
+          "2": 0.0
+        },
+        "current_move_time_remaining": 29.599999999999994
+      },
+      "agent_action": {
+        "type": "place",
+        "params": {
+          "position": [
+            9,
+            6
+          ],
+          "stone_type": "SPLITTER",
+          "player": 1
+        }
+      },
+      "reward_t": 0.0,
+      "terminal": false,
+      "event_log": [
+        "Player 1 placed SPLITTER at (9, 6)",
+        "Score: P1=0, P2=0"
+      ]
+    },
+    {
+      "turn_id": 7,
+      "state_t": {
+        "grid_size": 19,
+        "territory_threshold": 0.8,
+        "player_energy": {
+          "1": 6,
+          "2": 6
+        },
+        "stones": {
+          "12,8": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "9,7": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          },
+          "12,6": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "10,6": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          },
+          "9,5": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "9,6": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          },
+          "7,6": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          }
+        },
+        "player_captures": {
+          "1": 4,
+          "2": 3
+        },
+        "game_over": false,
+        "winner": null,
+        "victory_reason": "",
+        "total_time_limit": 0,
+        "move_time_limit": 30,
+        "player_time_remaining": {
+          "1": 0.0,
+          "2": 0.0
+        },
+        "current_move_time_remaining": 29.599999999999994
+      },
+      "agent_action": {
+        "type": "place",
+        "params": {
+          "position": [
+            7,
+            6
+          ],
+          "stone_type": "SPLITTER",
+          "player": 2
+        }
+      },
+      "reward_t": 0.0,
+      "terminal": false,
+      "event_log": [
+        "Player 2 placed SPLITTER at (7, 6)",
+        "Score: P1=0, P2=0"
+      ]
+    },
+    {
+      "turn_id": 8,
+      "state_t": {
+        "grid_size": 19,
+        "territory_threshold": 0.8,
+        "player_energy": {
+          "1": 6,
+          "2": 6
+        },
+        "stones": {
+          "12,8": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "9,7": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          },
+          "12,6": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "10,6": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          },
+          "9,5": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "9,6": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          },
+          "7,6": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "6,7": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          }
+        },
+        "player_captures": {
+          "1": 4,
+          "2": 3
+        },
+        "game_over": false,
+        "winner": null,
+        "victory_reason": "",
+        "total_time_limit": 0,
+        "move_time_limit": 30,
+        "player_time_remaining": {
+          "1": 0.0,
+          "2": 0.0
+        },
+        "current_move_time_remaining": 29.29999999999999
+      },
+      "agent_action": {
+        "type": "place",
+        "params": {
+          "position": [
+            6,
+            7
+          ],
+          "stone_type": "SPLITTER",
+          "player": 1
+        }
+      },
+      "reward_t": 0.0,
+      "terminal": false,
+      "event_log": [
+        "Player 1 placed SPLITTER at (6, 7)",
+        "Score: P1=0, P2=0"
+      ]
+    },
+    {
+      "turn_id": 9,
+      "state_t": {
+        "grid_size": 19,
+        "territory_threshold": 0.8,
+        "player_energy": {
+          "1": 6,
+          "2": 6
+        },
+        "stones": {
+          "12,8": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "9,7": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          },
+          "12,6": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "10,6": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          },
+          "9,5": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "9,6": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          },
+          "7,6": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "6,7": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          },
+          "8,9": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          }
+        },
+        "player_captures": {
+          "1": 4,
+          "2": 3
+        },
+        "game_over": false,
+        "winner": null,
+        "victory_reason": "",
+        "total_time_limit": 0,
+        "move_time_limit": 30,
+        "player_time_remaining": {
+          "1": 0.0,
+          "2": 0.0
+        },
+        "current_move_time_remaining": 29.499999999999993
+      },
+      "agent_action": {
+        "type": "place",
+        "params": {
+          "position": [
+            8,
+            9
+          ],
+          "stone_type": "SPLITTER",
+          "player": 2
+        }
+      },
+      "reward_t": 0.0,
+      "terminal": false,
+      "event_log": [
+        "Player 2 placed SPLITTER at (8, 9)",
+        "Score: P1=0, P2=0"
+      ]
+    },
+    {
+      "turn_id": 10,
+      "state_t": {
+        "grid_size": 19,
+        "territory_threshold": 0.8,
+        "player_energy": {
+          "1": 6,
+          "2": 6
+        },
+        "stones": {
+          "12,8": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "9,7": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          },
+          "12,6": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "10,6": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          },
+          "9,5": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "9,6": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          },
+          "7,6": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "6,7": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          },
+          "8,9": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "10,10": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          }
+        },
+        "player_captures": {
+          "1": 4,
+          "2": 3
+        },
+        "game_over": false,
+        "winner": null,
+        "victory_reason": "",
+        "total_time_limit": 0,
+        "move_time_limit": 30,
+        "player_time_remaining": {
+          "1": 0.0,
+          "2": 0.0
+        },
+        "current_move_time_remaining": 29.599999999999994
+      },
+      "agent_action": {
+        "type": "place",
+        "params": {
+          "position": [
+            10,
+            10
+          ],
+          "stone_type": "SPLITTER",
+          "player": 1
+        }
+      },
+      "reward_t": 0.0,
+      "terminal": false,
+      "event_log": [
+        "Player 1 placed SPLITTER at (10, 10)",
+        "Score: P1=0, P2=0"
+      ]
+    },
+    {
+      "turn_id": 11,
+      "state_t": {
+        "grid_size": 19,
+        "territory_threshold": 0.8,
+        "player_energy": {
+          "1": 6,
+          "2": 6
+        },
+        "stones": {
+          "12,8": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "9,7": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          },
+          "12,6": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "10,6": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          },
+          "9,5": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "9,6": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          },
+          "7,6": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "6,7": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          },
+          "8,9": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "10,10": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          },
+          "12,9": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          }
+        },
+        "player_captures": {
+          "1": 4,
+          "2": 3
+        },
+        "game_over": false,
+        "winner": null,
+        "victory_reason": "",
+        "total_time_limit": 0,
+        "move_time_limit": 30,
+        "player_time_remaining": {
+          "1": 0.0,
+          "2": 0.0
+        },
+        "current_move_time_remaining": 29.39999999999999
+      },
+      "agent_action": {
+        "type": "place",
+        "params": {
+          "position": [
+            12,
+            9
+          ],
+          "stone_type": "SPLITTER",
+          "player": 2
+        }
+      },
+      "reward_t": 0.0,
+      "terminal": false,
+      "event_log": [
+        "Player 2 placed SPLITTER at (12, 9)",
+        "Score: P1=0, P2=0"
+      ]
+    },
+    {
+      "turn_id": 12,
+      "state_t": {
+        "grid_size": 19,
+        "territory_threshold": 0.8,
+        "player_energy": {
+          "1": 6,
+          "2": 6
+        },
+        "stones": {
+          "12,8": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "9,7": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          },
+          "12,6": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "10,6": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          },
+          "9,5": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "9,6": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          },
+          "7,6": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "6,7": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          },
+          "8,9": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "10,10": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          },
+          "12,9": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "10,9": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          }
+        },
+        "player_captures": {
+          "1": 4,
+          "2": 3
+        },
+        "game_over": false,
+        "winner": null,
+        "victory_reason": "",
+        "total_time_limit": 0,
+        "move_time_limit": 30,
+        "player_time_remaining": {
+          "1": 0.0,
+          "2": 0.0
+        },
+        "current_move_time_remaining": 29.39999999999999
+      },
+      "agent_action": {
+        "type": "place",
+        "params": {
+          "position": [
+            10,
+            9
+          ],
+          "stone_type": "SPLITTER",
+          "player": 1
+        }
+      },
+      "reward_t": 0.0,
+      "terminal": false,
+      "event_log": [
+        "Player 1 placed SPLITTER at (10, 9)",
+        "Score: P1=0, P2=0"
+      ]
+    },
+    {
+      "turn_id": 13,
+      "state_t": {
+        "grid_size": 19,
+        "territory_threshold": 0.8,
+        "player_energy": {
+          "1": 6,
+          "2": 6
+        },
+        "stones": {
+          "12,8": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "9,7": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          },
+          "12,6": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "10,6": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          },
+          "9,5": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "9,6": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          },
+          "7,6": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "6,7": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          },
+          "8,9": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "10,10": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          },
+          "12,9": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "10,9": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 335.3458214882868
+          }
+        },
+        "player_captures": {
+          "1": 4,
+          "2": 3
+        },
+        "game_over": false,
+        "winner": null,
+        "victory_reason": "",
+        "total_time_limit": 0,
+        "move_time_limit": 30,
+        "player_time_remaining": {
+          "1": 0.0,
+          "2": 0.0
+        },
+        "current_move_time_remaining": 26.799999999999955
+      },
+      "agent_action": {
+        "type": "rotate",
+        "params": {
+          "position": [
+            10,
+            9
+          ],
+          "angle": 335.3458214882868,
+          "player": 2
+        }
+      },
+      "reward_t": 0.0,
+      "terminal": false,
+      "event_log": [
+        "Player 2 rotated stone at (10, 9) to 335.3\u00b0",
+        "Score: P1=0, P2=0"
+      ]
+    },
+    {
+      "turn_id": 14,
+      "state_t": {
+        "grid_size": 19,
+        "territory_threshold": 0.8,
+        "player_energy": {
+          "1": 6,
+          "2": 6
+        },
+        "stones": {
+          "12,8": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "12,6": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "9,5": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "7,6": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "6,7": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          },
+          "8,9": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "10,10": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          },
+          "12,9": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          }
+        },
+        "player_captures": {
+          "1": 4,
+          "2": 3
+        },
+        "game_over": false,
+        "winner": null,
+        "victory_reason": "",
+        "total_time_limit": 0,
+        "move_time_limit": 30,
+        "player_time_remaining": {
+          "1": 0.0,
+          "2": 0.0
+        },
+        "current_move_time_remaining": 30.0
+      },
+      "agent_action": {
+        "type": "laser",
+        "params": {
+          "position": [
+            10,
+            9
+          ],
+          "direction": [
+            -0.5248887029964605,
+            -0.8511708697239898
+          ],
+          "player": 1,
+          "captures": [
+            [
+              10,
+              9
+            ],
+            [
+              9,
+              7
+            ],
+            [
+              10,
+              9
+            ],
+            [
+              9,
+              7
+            ],
+            [
+              9,
+              7
+            ],
+            [
+              10,
+              6
+            ],
+            [
+              10,
+              9
+            ],
+            [
+              9,
+              7
+            ],
+            [
+              9,
+              7
+            ],
+            [
+              10,
+              6
+            ],
+            [
+              10,
+              9
+            ],
+            [
+              9,
+              7
+            ],
+            [
+              9,
+              7
+            ],
+            [
+              9,
+              7
+            ],
+            [
+              10,
+              6
+            ],
+            [
+              10,
+              9
+            ],
+            [
+              9,
+              7
+            ],
+            [
+              9,
+              7
+            ],
+            [
+              9,
+              7
+            ],
+            [
+              9,
+              6
+            ],
+            [
+              10,
+              9
+            ],
+            [
+              9,
+              7
+            ],
+            [
+              9,
+              7
+            ],
+            [
+              9,
+              7
+            ],
+            [
+              10,
+              6
+            ],
+            [
+              10,
+              9
+            ],
+            [
+              9,
+              7
+            ],
+            [
+              9,
+              7
+            ],
+            [
+              9,
+              7
+            ],
+            [
+              9,
+              6
+            ],
+            [
+              10,
+              9
+            ],
+            [
+              9,
+              7
+            ],
+            [
+              9,
+              7
+            ],
+            [
+              9,
+              7
+            ],
+            [
+              10,
+              6
+            ],
+            [
+              10,
+              9
+            ],
+            [
+              9,
+              7
+            ],
+            [
+              9,
+              7
+            ],
+            [
+              9,
+              7
+            ],
+            [
+              9,
+              6
+            ],
+            [
+              10,
+              9
+            ],
+            [
+              9,
+              7
+            ],
+            [
+              9,
+              7
+            ],
+            [
+              9,
+              7
+            ],
+            [
+              10,
+              6
+            ],
+            [
+              10,
+              9
+            ],
+            [
+              9,
+              7
+            ],
+            [
+              9,
+              7
+            ],
+            [
+              9,
+              7
+            ],
+            [
+              10,
+              6
+            ],
+            [
+              10,
+              9
+            ],
+            [
+              9,
+              7
+            ],
+            [
+              9,
+              7
+            ],
+            [
+              9,
+              7
+            ],
+            [
+              9,
+              6
+            ],
+            [
+              10,
+              9
+            ],
+            [
+              9,
+              7
+            ],
+            [
+              9,
+              7
+            ],
+            [
+              9,
+              7
+            ],
+            [
+              9,
+              6
+            ]
+          ]
+        }
+      },
+      "reward_t": 0.0,
+      "terminal": false,
+      "event_log": [
+        "Player 1 fired laser from (10, 9) capturing 60 stones",
+        "Score: P1=13, P2=0"
+      ]
+    },
+    {
+      "turn_id": 15,
+      "state_t": {
+        "grid_size": 19,
+        "territory_threshold": 0.8,
+        "player_energy": {
+          "1": 6,
+          "2": 6
+        },
+        "stones": {
+          "9,5": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "7,6": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "6,7": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          },
+          "8,9": {
+            "type": "SPLITTER",
+            "player": 1,
+            "rotation": 0
+          },
+          "10,10": {
+            "type": "SPLITTER",
+            "player": 2,
+            "rotation": 0
+          }
+        },
+        "player_captures": {
+          "1": 4,
+          "2": 3
+        },
+        "game_over": false,
+        "winner": null,
+        "victory_reason": "",
+        "total_time_limit": 0,
+        "move_time_limit": 30,
+        "player_time_remaining": {
+          "1": 0.0,
+          "2": 0.0
+        },
+        "current_move_time_remaining": 30.0
+      },
+      "agent_action": {
+        "type": "laser",
+        "params": {
+          "position": [
+            12,
+            6
+          ],
+          "direction": [
+            -0.038067625343148934,
+            0.999275165257665
+          ],
+          "player": 2,
+          "captures": [
+            [
+              12,
+              6
+            ],
+            [
+              12,
+              8
+            ],
+            [
+              12,
+              9
+            ],
+            [
+              12,
+              6
+            ],
+            [
+              12,
+              8
+            ],
+            [
+              12,
+              8
+            ],
+            [
+              12,
+              9
+            ],
+            [
+              12,
+              6
+            ],
+            [
+              12,
+              8
+            ],
+            [
+              12,
+              8
+            ],
+            [
+              12,
+              9
+            ],
+            [
+              12,
+              6
+            ],
+            [
+              12,
+              8
+            ],
+            [
+              12,
+              8
+            ],
+            [
+              12,
+              9
+            ],
+            [
+              12,
+              6
+            ],
+            [
+              12,
+              8
+            ],
+            [
+              12,
+              9
+            ],
+            [
+              12,
+              9
+            ],
+            [
+              12,
+              6
+            ],
+            [
+              12,
+              8
+            ],
+            [
+              12,
+              9
+            ],
+            [
+              12,
+              9
+            ],
+            [
+              12,
+              6
+            ],
+            [
+              12,
+              8
+            ],
+            [
+              12,
+              8
+            ],
+            [
+              12,
+              9
+            ],
+            [
+              12,
+              9
+            ],
+            [
+              12,
+              6
+            ],
+            [
+              12,
+              8
+            ],
+            [
+              12,
+              8
+            ],
+            [
+              12,
+              9
+            ],
+            [
+              12,
+              9
+            ]
+          ]
+        }
+      },
+      "reward_t": 0.0,
+      "terminal": false,
+      "event_log": [
+        "Player 2 fired laser from (12, 6) capturing 33 stones",
+        "Score: P1=13, P2=13"
+      ]
+    }
+  ]
+}

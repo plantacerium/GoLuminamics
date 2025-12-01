@@ -1,0 +1,70 @@
+{
+    "meta": {
+        "version": "1.1.0",
+        "description": "UI configuration for GoLuminamics",
+        "last_updated": "2025-11-30"
+    },
+    "board": {
+        "margin_horizontal": 40,
+        "margin_vertical": 30,
+        "grid_size": 19,
+        "cell_size": 35
+    },
+    "stones": {
+        "real_stone_3d_effects": {
+            "enabled": true,
+            "shadow": {
+                "enabled": true,
+                "offset_x": 3,
+                "offset_y": 3,
+                "blur_radius": 5,
+                "opacity": 0.4
+            },
+            "bevel": {
+                "enabled": true,
+                "inner_highlight_strength": 0.3,
+                "inner_shadow_strength": 0.2,
+                "bevel_size": 0.15
+            },
+            "specular": {
+                "enabled": true,
+                "position_offset_ratio": 0.25,
+                "size_ratio": 0.3,
+                "opacity": 0.6,
+                "color": "#FFFFFF"
+            },
+            "normal_map": {
+                "enabled": true,
+                "bump_strength": 0.25
+            }
+        }
+    },
+    "themes": {
+        "preserve_from_code": true
+    },
+    "lasers": {
+        "core_width": 3,
+        "border_width": 5
+    },
+    "rotation_indicators": {
+        "plus_sign": {
+            "enabled": true,
+            "size": 10,
+            "pen_width": 2,
+            "color": {
+                "black_team": "#FFFFFF",
+                "white_team": "#000000"
+            }
+        },
+        "direction_line": {
+            "enabled": true,
+            "length": 12,
+            "pen_width": 2,
+            "offset_from_plus": 3,
+            "color": {
+                "black_team": "#FFFFFF",
+                "white_team": "#000000"
+            }
+        }
+    }
+}
