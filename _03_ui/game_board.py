@@ -888,6 +888,32 @@ class GameBoard(QGraphicsView):
         self.board_state = BoardState2D(self.grid_size, territory_threshold=self.territory_threshold)
         self.current_player = 1
 
+    def set_grid_size(self, new_size):
+        """Set the grid size and reinitialize the board."""
+        if new_size not in BoardState2D.GRID_SIZES:
+            raise ValueError(f"Invalid grid size {new_size}. Must be one of {BoardState2D.GRID_SIZES}")
+        
+        # Update grid size
+        self.grid_size = new_size
+        self.laser_calc = LaserCalculator2D(new_size)
+        
+        # Clear ALL scene items (including grid, background, stones, lasers)
+        self.scene.clear()
+        self.stone_items.clear()
+        self.laser_items.clear()
+        self.victory_items.clear()
+        self.aiming_arrow = None
+        
+        # Reinitialize board state with new size
+        self.board_state = BoardState2D(new_size, territory_threshold=self.territory_threshold)
+        self.current_player = 1
+        
+        # Redraw board with new grid
+        self._init_board()
+        
+        # Recalculate scene rect and fit to view
+        self._setup_view()
+
     def show_victory_screen(self, winner, reason, p1_score=0, p2_score=0):
         """Display a dramatic victory screen overlay with scores."""
         # Fix: Clear existing victory items first to avoid ghost overlays

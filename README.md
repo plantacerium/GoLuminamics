@@ -12,18 +12,19 @@
 </div>
 
 
-
 ## 🎯 What is GoLuminamics?
 
-GoLuminamics is a **strategic territory control game** that combines the depth of Go with the physics of light. Place optical stones (prisms, mirrors, splitters) on a 19×19 board and fire laser beams to illuminate territory and capture opponent pieces.
+GoLuminamics is a **strategic territory control game** that combines the depth of Go with the physics of light. Place optical stones (prisms, mirrors, splitters) on a configurable board (9×9 to 39×39) and fire laser beams to illuminate territory and capture opponent pieces.
 
 ### ✨ Key Features
 
 - 🔮 **Three Stone Types**: Prisms (transmit), Mirrors (reflect), Splitters (branch)
 - ⚡ **Real-Time Laser Physics**: Watch beams bounce, split, and illuminate the board
+- 📐 **Adjustable Board Size**: 9×9 to 39×39 grids for different game lengths
+- ♾️ **Flexible Game Modes**: Infinite energy, infinite score (no mercy rule), customizable timers
 - 🎨 **Beautiful Visuals**: Neon laser effects with smooth animations
 - 💾 **Game Recording**: Save and replay your matches
-- 🏆 **Multiple Victory Conditions**: Territory control, total domination, or opponent surrender
+- 🏆 **Multiple Victory Conditions**: Territory control, time-based, or surrender
 
 ---
 
@@ -77,7 +78,7 @@ Control more territory than your opponent by strategically placing stones and fi
 
 1. **Placement Phase**: Players alternate placing stones on empty intersections
 2. **Rotation**: Rotate stones to control laser direction (0-360°)
-3. **Energy System**: Start with 10 energy, gain 2 per turn
+3. **Energy System**: Start with 10 energy, gain 2 per turn (or enable Infinite Energy)
 4. **Laser Firing**: Lasers enter from board edges and interact with stones
 5. **Territory**: Illuminated intersections count as your territory
 6. **Captures**: Lasers hitting opponent stones capture them (+2 points each)
@@ -85,7 +86,8 @@ Control more territory than your opponent by strategically placing stones and fi
 ### Victory Conditions
 
 - 🏁 **Mutual Pass**: Both players pass → Highest score wins
-- 👑 **Total Victory**: Score difference > 50 OR control > 80% territory
+- 👑 **Total Victory**: Score difference > 50 OR control > 80% territory (configurable, or disable with Infinite Score)
+- ⏱️ **Time Expires**: When timer runs out → Highest score wins
 - 🏳️ **Surrender**: Opponent gives up
 
 ### Controls

@@ -8,7 +8,7 @@ class GameRecorder:
     Updated for Protocol V2: Supports Replayable JSON Log schema for DRL and LLM training.
     """
     
-    def __init__(self, player1_name="Player 1", player2_name="Player 2", metadata=None):
+    def __init__(self, player1_name="Player 1", player2_name="Player 2", grid_size=19, metadata=None):
         self.game_id = f"2d_game_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}"
         self.players = [player1_name, player2_name]
         
@@ -18,7 +18,8 @@ class GameRecorder:
             "random_seed": None,
             "game_settings": {
                 "player1": player1_name,
-                "player2": player2_name
+                "player2": player2_name,
+                "grid_size": grid_size
             }
         }
         self.turn_sequence = []

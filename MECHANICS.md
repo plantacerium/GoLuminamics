@@ -3,9 +3,10 @@
 ## 📋 Core Game System
 
 ### Board Configuration
-- **Grid Size**: 19×19 intersections
+- **Grid Sizes**: Configurable (9×9, 13×13, 19×19, 23×23, 27×27, 31×31, 35×35, 39×39)
+- **Default Size**: 19×19 intersections
 - **Cell Size**: 35 pixels per cell
-- **Coordinate System**: (x, y) tuples, 0-18 for on-board positions, -1 or 19 for edge positions
+- **Coordinate System**: (x, y) tuples, 0 to (grid_size-1) for on-board positions
 - **Direction Format**: Normalized (dx, dy) vectors for laser trajectories
 
 ### Player System
@@ -20,14 +21,15 @@
 ## ⚡ Energy System
 
 ### Energy Rules
-- **Starting Energy**: 20 per player
+- **Starting Energy**: 10 per player (configurable)
 - **Maximum Energy**: 20 (hard cap)
 - **Energy Recharge**: +2 per turn
-- **Stone Placement Cost**: 1 energy
+- **Stone Placement Cost**: 1 energy (configurable via `energy_cost`)
 - **Laser Firing Cost**: 0 energy (free action)
+- **Infinite Energy Mode**: Optional setting that removes energy costs entirely
 
 ### Energy Management
-Energy is checked before actions, consumed after successful placement, and recharged at end of turn. This creates strategic resource management where players must balance offensive laser actions with defensive stone placement.
+Energy is checked before actions, consumed after successful placement, and recharged at end of turn. When **Infinite Energy** is enabled via the UI, placement costs are ignored, allowing unlimited stone placement.
 
 ---
 
@@ -114,18 +116,31 @@ Scoring is dynamic and recalculated after each laser shot. The replayer system t
 - **Winner**: Player with highest score
 - **Reason**: "Score Victory"
 
-### 2. Total Victory
+### 2. Total Victory (Mercy Rule)
 - **Trigger 1**: Score difference > 50 points
 - **Trigger 2**: Control > Territory Threshold (configurable: 80%, 90%, or 100%)
 - **Default Setting**: 80% territory control
 - **Winner**: Dominant player
 - **Reason**: "Total Domination"
 - **Configuration**: Adjustable via "Victory" dropdown in game setup
+- **Note**: Can be disabled with **Infinite Score** mode
 
-### 3. Surrender
+### 3. Time-Based Victory
+- **Trigger**: Total time expires (when timer is set)
+- **Winner**: Player with highest score at time of expiration
+- **Reason**: "Time Expired"
+- **Note**: Primary victory mode when **Infinite Score** is enabled
+
+### 4. Surrender
 - **Trigger**: Player chooses to surrender (Esc → Surrender)
 - **Winner**: Opponent
 - **Reason**: "Opponent Surrendered"
+
+### Infinite Score Mode
+When **Infinite Score (No Mercy)** is enabled:
+- Mercy rule conditions (score difference >50, territory threshold) are disabled
+- Game continues until time expires, mutual pass, or surrender
+- Victory determined by final score comparison
 
 ---
 
@@ -217,12 +232,12 @@ Scoring is dynamic and recalculated after each laser shot. The replayer system t
 
 ## 📝 Game Rules Summary
 
-1. **Setup**: 19×19 board, both players start with 20 energy
-2. **Turns**: Alternate placing stones (1 energy) or passing
+1. **Setup**: Configurable board (9×9 to 39×39, default 19×19), both players start with 10 energy
+2. **Turns**: Alternate placing stones (1 energy, or free with Infinite Energy) or passing
 3. **Rotation**: Stones can be rotated 0-360° for mirrors
 4. **Lasers**: Fire from board edges, interact with stones
 5. **Captures**: Lasers destroy opponent stones (+2 points each)
 6. **Territory**: Illuminated intersections count toward score
-7. **Victory**: Mutual pass (highest score), total domination (50+ point lead or configurable % territory), or surrender
-8. **Energy**: +2 recharge per turn, max 20
+7. **Victory**: Time expires, mutual pass (highest score), total domination (unless Infinite Score enabled), or surrender
+8. **Energy**: +2 recharge per turn, max 20 (or unlimited with Infinite Energy)
 

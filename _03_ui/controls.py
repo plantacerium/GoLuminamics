@@ -27,6 +27,8 @@ class UIControls(QWidget):
     theme_changed = Signal(str)
     victory_threshold_changed = Signal(float)
     timer_settings_changed = Signal(int, int) # total_min, move_sec
+    infinite_energy_changed = Signal(bool)
+    infinite_score_changed = Signal(bool)
     
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -84,6 +86,22 @@ class UIControls(QWidget):
         threshold_layout.addWidget(self.threshold_combo)
         layout.addLayout(threshold_layout)
 
+        # Grid Size Selection
+        grid_size_layout = QHBoxLayout()
+        grid_size_label = QLabel("Board Size:")
+        self.grid_size_combo = QComboBox()
+        # GRID_SIZES = [9, 13, 19, 23, 27, 31, 35, 39]
+        for size in [9, 13, 19, 23, 27, 31, 35, 39]:
+            self.grid_size_combo.addItem(f"{size}x{size}", size)
+        self.grid_size_combo.setCurrentIndex(2)  # Default to 19x19
+        self.grid_size_combo.setToolTip("Board grid size (requires restart)")
+        self.grid_size_combo.currentIndexChanged.connect(
+            lambda: self.grid_size_changed.emit(self.grid_size_combo.currentData())
+        )
+        grid_size_layout.addWidget(grid_size_label)
+        grid_size_layout.addWidget(self.grid_size_combo)
+        layout.addLayout(grid_size_layout)
+
         # Timer Settings
         timer_group = QGroupBox("Timer Settings")
         timer_layout = QGridLayout()
@@ -110,6 +128,23 @@ class UIControls(QWidget):
         
         timer_group.setLayout(timer_layout)
         layout.addWidget(timer_group)
+        
+        # Energy Settings
+        from PySide6.QtWidgets import QCheckBox
+        self.infinite_energy_check = QCheckBox("Infinite Energy")
+        self.infinite_energy_check.setToolTip("When checked, stone placement doesn't consume energy")
+        self.infinite_energy_check.stateChanged.connect(
+            lambda state: self.infinite_energy_changed.emit(state == 2)  # 2 = Checked
+        )
+        layout.addWidget(self.infinite_energy_check)
+        
+        # Victory Settings
+        self.infinite_score_check = QCheckBox("Infinite Score (No Mercy)")
+        self.infinite_score_check.setToolTip("When checked, no mercy rule - victory by time & final score")
+        self.infinite_score_check.stateChanged.connect(
+            lambda state: self.infinite_score_changed.emit(state == 2)
+        )
+        layout.addWidget(self.infinite_score_check)
         
         # Score Board
         score_group = QGroupBox("Score")
@@ -304,6 +339,10 @@ class UIControls(QWidget):
     def get_victory_threshold(self):
         """Returns the selected victory threshold as a float (0.8, 0.9, or 1.0)"""
         return self.threshold_combo.currentData()
+
+    def get_grid_size(self):
+        """Returns the selected grid size (9, 13, 19, 23, 27, 31, 35, or 39)"""
+        return self.grid_size_combo.currentData()
 
     def emit_timer_settings(self):
         """Emit timer settings changed signal."""

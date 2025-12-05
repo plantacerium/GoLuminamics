@@ -453,6 +453,14 @@ class ReplayerWindow(QMainWindow):
                     # Ensure game_id exists
                     if 'game_id' not in self.game_data:
                         self.game_data['game_id'] = "V2_Log"
+                        
+                    # Extract Grid Size from first turn if available
+                    if self.game_data.get('turn_sequence'):
+                         first_turn = self.game_data['turn_sequence'][0]
+                         state_t = first_turn.get('state_t', {})
+                         self.game_data['grid_size'] = state_t.get('grid_size', 19)
+                    else:
+                         self.game_data['grid_size'] = 19
 
                 # Validate game data structure
                 if not self.game_data or 'moves' not in self.game_data:
@@ -460,6 +468,13 @@ class ReplayerWindow(QMainWindow):
                 
                 # Load chart data to show full graph immediately
                 self.controls.chart.set_data(self.game_data['moves'])
+                
+                # Update Board Grid Size
+                grid_size = self.game_data.get('grid_size', 19)
+                try:
+                    self.board.set_grid_size(grid_size)
+                except ValueError as e:
+                    QMessageBox.warning(self, "Warning", f"Invalid grid size in replay: {e}. Using default.")
                 
                 # Reset to beginning (don't auto-play)
                 self.reset_replay()
@@ -503,13 +518,17 @@ class ReplayerWindow(QMainWindow):
             # Show victory screen
             self.board.show_victory_screen(winner, reason, p1_total, p2_total)
     
+    
     def update_game_info(self):
         """Update game information display."""
         if not self.game_data:
             return
         
-        info = f"""<b>Game ID:</b> {self.game_data['game_id']}<br>
+        grid_size = self.game_data.get('grid_size', 19)
+        
+        info = f"""<b>Game ID:</b> {self.game_data.get('game_id', 'Unknown')}<br>
 <b>Players:</b> {self.game_data['players'][0]} vs {self.game_data['players'][1]}<br>
+<b>Grid Size:</b> {grid_size}x{grid_size}<br>
 <b>Total Moves:</b> {self.game_data['total_turns']}<br>
 <b>Current:</b> Move {self.current_move_index} of {len(self.game_data['moves'])}"""
         

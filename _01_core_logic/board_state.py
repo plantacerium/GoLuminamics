@@ -37,13 +37,25 @@ class StoneData2D:
 
 class BoardState2D:
     """Manages the logical state of the 2D game board."""
-    def __init__(self, grid_size=19, starting_energy=10, territory_threshold=0.8):
+    
+    # Available board sizes (user configurable)
+    GRID_SIZES = [9, 13, 19, 23, 27, 31, 35, 39]
+    
+    def __init__(self, grid_size=19, starting_energy=10, territory_threshold=0.8,
+                 infinite_energy=False, energy_cost=1, infinite_score=False):
+        # Validate grid_size
+        if grid_size not in self.GRID_SIZES:
+            raise ValueError(f"Invalid grid_size {grid_size}. Must be one of {self.GRID_SIZES}")
+        
         self.grid_size = grid_size
         self.stones = {}  # Map (x,y) -> StoneData2D
         self.laser_sources = []  # List of (pos, dir, player) tuples
         self.territory_threshold = territory_threshold # Victory condition threshold
+        self.infinite_score = infinite_score  # When True, no mercy rule
         
         # Energy system
+        self.infinite_energy = infinite_energy
+        self.energy_cost = energy_cost
         self.starting_energy = starting_energy
         self.player_energy = {1: starting_energy, 2: starting_energy}
         self.max_energy = 20  # Energy cap
@@ -77,6 +89,9 @@ class BoardState2D:
         return {
             "grid_size": self.grid_size,
             "territory_threshold": self.territory_threshold,
+            "infinite_score": self.infinite_score,
+            "infinite_energy": self.infinite_energy,
+            "energy_cost": self.energy_cost,
             "player_energy": self.player_energy,
             "stones": stones_data,
             "player_captures": self.player_captures,
@@ -94,7 +109,12 @@ class BoardState2D:
         """Create BoardState2D from dictionary."""
         grid_size = data.get("grid_size", 19)
         territory_threshold = data.get("territory_threshold", 0.8)
-        board = cls(grid_size, territory_threshold=territory_threshold)
+        infinite_score = data.get("infinite_score", False)
+        infinite_energy = data.get("infinite_energy", False)
+        energy_cost = data.get("energy_cost", 1)
+        board = cls(grid_size, territory_threshold=territory_threshold,
+                    infinite_energy=infinite_energy, energy_cost=energy_cost,
+                    infinite_score=infinite_score)
         
         # Restore energy
         board.player_energy = data.get("player_energy", {1: 10, 2: 10})
@@ -145,7 +165,8 @@ class BoardState2D:
     
     def clone(self):
         """Create a deep copy of the board state (faster than to_dict/from_dict)."""
-        new_board = BoardState2D(self.grid_size, self.starting_energy, self.territory_threshold)
+        new_board = BoardState2D(self.grid_size, self.starting_energy, self.territory_threshold,
+                                 self.infinite_energy, self.energy_cost, self.infinite_score)
         
         # Copy simple attributes
         new_board.player_energy = self.player_energy.copy()
@@ -183,8 +204,8 @@ class BoardState2D:
             print(f"Stone already at {pos_tuple}")
             return False
         
-        # Check energy
-        if not self.has_energy(player, 1):
+        # Check energy (skip if infinite)
+        if not self.infinite_energy and not self.has_energy(player, self.energy_cost):
             print(f"Player {player} has insufficient energy")
             return False
         
@@ -195,8 +216,9 @@ class BoardState2D:
         elif stone_type_name == "SPLITTER":
             sType = StoneType.SPLITTER
         
-        # Spend energy and place stone
-        self.spend_energy(player, 1)
+        # Spend energy (if not infinite) and place stone
+        if not self.infinite_energy:
+            self.spend_energy(player, self.energy_cost)
         self.stones[pos_tuple] = StoneData2D(sType, player)
         self.reset_passes()  # Valid move resets pass counter
         self.check_victory_condition()  # Check for victory
@@ -236,8 +258,12 @@ class BoardState2D:
         """Get current energy for player."""
         return self.player_energy.get(player, 0)
     
-    def has_energy(self, player, amount):
-        """Check if player has enough energy."""
+    def has_energy(self, player, amount=None):
+        """Check if player has enough energy. If infinite_energy, always True."""
+        if self.infinite_energy:
+            return True
+        if amount is None:
+            amount = self.energy_cost
         return self.get_energy(player) >= amount
     
     def spend_energy(self, player, amount):
@@ -317,8 +343,12 @@ class BoardState2D:
         self.victory_reason = f"Player {player} Surrendered"
     
     def check_victory_condition(self):
-        """Check for Total Victory (Mercy Rule)."""
+        """Check for Total Victory (Mercy Rule). Skipped if infinite_score is True."""
         if self.game_over:
+            return
+        
+        # Skip mercy rule when infinite_score is enabled
+        if self.infinite_score:
             return
             
         score = self.calculate_score()
@@ -361,6 +391,23 @@ class BoardState2D:
             self.winner = 2
         else:
             self.winner = 0  # Tie
+    
+    def end_game_by_time(self):
+        """End game due to time expiration. Winner determined by final score."""
+        if self.game_over:
+            return
+            
+        self.game_over = True
+        self._determine_winner_by_score()
+        
+        score = self.calculate_score()
+        p1_final = score["player1"] + (self.player_captures[1] * 2)
+        p2_final = score["player2"] + (self.player_captures[2] * 2)
+        
+        if self.winner == 0:
+            self.victory_reason = f"Time Expired - Draw ({p1_final} - {p2_final})"
+        else:
+            self.victory_reason = f"Time Expired - P{self.winner} Wins ({p1_final} - {p2_final})"
     
     def calculate_score(self):
         """Calculate territory score based on illuminated intersections."""

@@ -19,8 +19,8 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("GoLuminamics")
         self.resize(1200, 800)
         
-        # Initialize Recorder
-        self.recorder = GameRecorder(player1_name="Player 1", player2_name="Player 2")
+        # recorder initialized later after board
+
         
         # Set dark background to reduce white space
         self.setStyleSheet("""
@@ -45,6 +45,10 @@ class MainWindow(QMainWindow):
         # Game Board (with initial threshold from controls)
         initial_threshold = self.controls.get_victory_threshold()
         self.board = GameBoard(territory_threshold=initial_threshold)
+        
+        # Initialize Recorder
+        self.recorder = GameRecorder(player1_name="Player 1", player2_name="Player 2", grid_size=self.board.grid_size)
+        
         layout.addWidget(self.board, stretch=1)
         layout.addWidget(self.controls, stretch=0)
         
@@ -56,6 +60,9 @@ class MainWindow(QMainWindow):
         # Connect theme and victory threshold signals
         self.controls.theme_changed.connect(self.board.set_theme)
         self.controls.victory_threshold_changed.connect(self.handle_threshold_change)
+        self.controls.grid_size_changed.connect(self.handle_grid_size_change)
+        self.controls.infinite_energy_changed.connect(self.handle_infinite_energy_change)
+        self.controls.infinite_score_changed.connect(self.handle_infinite_score_change)
         
         # Connect stone placement to update energy display
         self.board.stone_placed.connect(self.on_stone_placed)
@@ -188,7 +195,7 @@ class MainWindow(QMainWindow):
         self.controls.emit_timer_settings()
         
         # Reset recorder
-        self.recorder = GameRecorder(player1_name="Player 1", player2_name="Player 2")
+        self.recorder = GameRecorder(player1_name="Player 1", player2_name="Player 2", grid_size=self.board.grid_size)
         
         self.update_energy_display()
         self.controls.update_score(0, 0)
@@ -200,6 +207,45 @@ class MainWindow(QMainWindow):
         self.board.territory_threshold = new_threshold
         self.board.board_state.territory_threshold = new_threshold
         print(f"Victory threshold changed to {int(new_threshold * 100)}% territory control")
+    
+    def handle_grid_size_change(self, new_size):
+        """Handle grid size change from UI."""
+        if new_size != self.board.board_state.grid_size:
+            # Confirm with user since this restarts the game
+            from PySide6.QtWidgets import QMessageBox
+            reply = QMessageBox.question(
+                self, "Change Board Size",
+                f"Changing to {new_size}x{new_size} will restart the game. Continue?",
+                QMessageBox.Yes | QMessageBox.No, QMessageBox.No
+            )
+            if reply == QMessageBox.Yes:
+                self.board.set_grid_size(new_size)
+                self.handle_restart()
+                print(f"Grid size changed to {new_size}x{new_size}")
+            else:
+                # Reset combo to current size
+                current_size = self.board.board_state.grid_size
+                index = self.controls.grid_size_combo.findData(current_size)
+                self.controls.grid_size_combo.blockSignals(True)
+                self.controls.grid_size_combo.setCurrentIndex(index)
+                self.controls.grid_size_combo.blockSignals(False)
+    
+    def handle_infinite_energy_change(self, enabled):
+        """Handle infinite energy toggle from UI."""
+        self.board.board_state.infinite_energy = enabled
+        if enabled:
+            print("Infinite Energy enabled")
+        else:
+            print("Infinite Energy disabled")
+        self.update_energy_display()
+    
+    def handle_infinite_score_change(self, enabled):
+        """Handle infinite score toggle from UI."""
+        self.board.board_state.infinite_score = enabled
+        if enabled:
+            print("Infinite Score enabled (no mercy rule)")
+        else:
+            print("Infinite Score disabled (mercy rule active)")
         
     def handle_manual_place(self, pos):
         """Handle manual stone placement from UI inputs."""
