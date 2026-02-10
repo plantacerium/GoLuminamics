@@ -2,7 +2,7 @@ import sys
 import os
 import random
 import time
-from PySide6.QtWidgets import QApplication, QMessageBox, QPushButton
+from PySide6.QtWidgets import QApplication, QMessageBox, QPushButton, QCheckBox, QWidget, QHBoxLayout
 from PySide6.QtCore import QTimer
 
 # Reutilizamos la ventana principal existente
@@ -13,19 +13,22 @@ from _02_engines.ai_player import AIAgent
 class DualLogger:
     def __init__(self, filename):
         self.terminal = sys.stdout
-        self.log = open(filename, "a", encoding='utf-8')
+        self.log_file = open(filename, "a", encoding='utf-8')
+        self.enabled = True
 
     def write(self, message):
         try:
             self.terminal.write(message)
-            self.log.write(message)
-            self.log.flush() # Ensure it's written immediately
+            if self.enabled:
+                self.log_file.write(message)
+                self.log_file.flush() # Ensure it's written immediately
         except Exception:
              pass # Prevent crashes on logging errors
 
     def flush(self):
         self.terminal.flush()
-        self.log.flush()
+        if self.enabled:
+            self.log_file.flush()
 
 class ArenaWindow(MainWindow):
     def __init__(self, p1_model="gemma3:4b", p2_model="gemma3:4b", use_all_playbooks=True):
@@ -35,7 +38,8 @@ class ArenaWindow(MainWindow):
         if not os.path.exists("logs"):
             os.makedirs("logs")
         log_filename = f"logs/match_{time.strftime('%Y%m%d-%H%M%S')}.txt"
-        sys.stdout = DualLogger(log_filename)
+        self.logger = DualLogger(log_filename)
+        sys.stdout = self.logger
         print(f"=== INICIO DE REGISTRO EN: {log_filename} ===")
         
         self.setWindowTitle("GoLuminamics - AI Arena")
@@ -57,7 +61,11 @@ class ArenaWindow(MainWindow):
         self.board.board_state.infinite_energy = True
         self.update_energy_display()
 
-        # --- AÑADIR BOTÓN DE START ---
+        # --- AÑADIR BOTÓN DE START Y CHECKBOX DE LOG ---
+        self.ai_match_container = QWidget()
+        ai_match_layout = QHBoxLayout(self.ai_match_container)
+        ai_match_layout.setContentsMargins(0, 0, 0, 0)
+        
         self.start_btn = QPushButton("START AI MATCH")
         self.start_btn.setStyleSheet("""
             QPushButton { 
@@ -69,9 +77,17 @@ class ArenaWindow(MainWindow):
             QPushButton:hover { background-color: #009DFF; }
         """)
         self.start_btn.clicked.connect(self.toggle_match)
+        ai_match_layout.addWidget(self.start_btn, 4) # Weight 4
         
-        # Insertar el botón en el panel de controles usando el método helper que creamos
-        self.controls.add_extra_action_button(self.start_btn, index=0)
+        self.log_check = QCheckBox("Log")
+        self.log_check.setChecked(True)
+        self.log_check.setToolTip("Enable/Disable logging to file")
+        self.log_check.setStyleSheet("color: #CCC; font-weight: bold; margin-left: 5px;")
+        self.log_check.stateChanged.connect(self.handle_logging_toggle)
+        ai_match_layout.addWidget(self.log_check, 1) # Weight 1
+        
+        # Insertar el contenedor en el panel de controles
+        self.controls.add_extra_action_button(self.ai_match_container, index=0)
         
         print(f"Arena Inicializada. Modelos: {p1_model} vs {p2_model}. All Playbooks: {use_all_playbooks}")
 
@@ -117,6 +133,14 @@ class ArenaWindow(MainWindow):
             print("INFO: Pass Turn disabled for 'No Mercy' ruleset.")
         else:
             print("INFO: Pass Turn re-enabled.")
+
+    def handle_logging_toggle(self, state):
+        """Habilita o deshabilita el registro en archivo."""
+        is_enabled = (state == 2) # 2 is Qt.Checked
+        if hasattr(self, 'logger'):
+            self.logger.enabled = is_enabled
+            status = "HABILITADO" if is_enabled else "DESHABILITADO"
+            print(f"=== REGISTRO EN ARCHIVO {status} ===")
 
     def play_next_turn(self):
         if self.board.board_state.game_over:
