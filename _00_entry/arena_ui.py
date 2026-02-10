@@ -137,6 +137,8 @@ class ArenaWindow(MainWindow):
             action = agent.get_move(dummy_server)
             
             if action:
+                if "thought" in action:
+                    print(f"💭 PENSAMIENTO ({agent.model_name}): {action['thought']}")
                 self.execute_ai_move(action)
             else:
                 print("IA no devolvió acción válida. Pasando turno.")
