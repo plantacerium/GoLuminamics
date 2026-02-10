@@ -215,25 +215,25 @@ class UIControls(QWidget):
         
         # Actions
         action_group = QGroupBox("Actions")
-        action_layout = QVBoxLayout()
+        self.action_layout = QVBoxLayout()
         
         self.pass_btn = QPushButton("Pass Turn")
         self.pass_btn.clicked.connect(self.pass_turn.emit)
-        action_layout.addWidget(self.pass_btn)
+        self.action_layout.addWidget(self.pass_btn)
         
         self.surrender_btn = QPushButton("Surrender")
         self.surrender_btn.clicked.connect(self.surrender.emit)
-        action_layout.addWidget(self.surrender_btn)
+        self.action_layout.addWidget(self.surrender_btn)
         
         self.restart_btn = QPushButton("Restart Game")
         self.restart_btn.clicked.connect(self.restart_game.emit)
-        action_layout.addWidget(self.restart_btn)
+        self.action_layout.addWidget(self.restart_btn)
         
         self.save_btn = QPushButton("Save Game")
         self.save_btn.clicked.connect(self.save_game.emit)
-        action_layout.addWidget(self.save_btn)
+        self.action_layout.addWidget(self.save_btn)
         
-        action_group.setLayout(action_layout)
+        action_group.setLayout(self.action_layout)
         layout.addWidget(action_group)
         
         # Manual Placement
@@ -366,4 +366,18 @@ class UIControls(QWidget):
             self.move_timer_label.setStyleSheet("font-weight: bold; color: #FF4444;")
         else:
             self.move_timer_label.setStyleSheet("font-weight: bold; color: #FFD700;")
+
+    def set_stone_type(self, stone_type):
+        """Programmatically set the selected stone type."""
+        stone_type = stone_type.upper()
+        if stone_type == "PRISM":
+            self.prism_radio.setChecked(True)
+        elif stone_type == "MIRROR":
+            self.mirror_radio.setChecked(True)
+        elif stone_type == "SPLITTER":
+            self.splitter_radio.setChecked(True)
+
+    def add_extra_action_button(self, widget, index=0):
+        """Add an extra button to the actions group."""
+        self.action_layout.insertWidget(index, widget)
 
