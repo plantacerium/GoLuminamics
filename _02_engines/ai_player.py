@@ -42,7 +42,6 @@ class AIAgent:
                 playbook_dir = "playbooks"
                 if not os.path.exists(playbook_dir):
                      return ""
-
             
             files = [f for f in os.listdir(playbook_dir) if f.endswith(".md")]
             if not files:
@@ -100,7 +99,7 @@ class AIAgent:
         valid_actions = actions_response.get("valid_actions", [])
         
         if not valid_actions:
-            return [], "No valid actions."
+            return [], "[]"
 
         place_actions = [a for a in valid_actions if a['type'] == 'place']
         sample = random.sample(place_actions, min(5, len(place_actions))) if place_actions else []
@@ -109,64 +108,157 @@ class AIAgent:
         rotate_actions = [a for a in valid_actions if a['type'] == 'rotate']
         if rotate_actions:
             sample.append(random.choice(rotate_actions))
+        
+        laser_actions = [a for a in valid_actions if a['type'] == 'laser']
+        if laser_actions:
+            sample.append(random.choice(laser_actions))
             
         return valid_actions, json.dumps(sample)
 
+    def get_structured_board_state(self, server: GameServer) -> str:
+        """
+        Devuelve una descripción textual detallada de las piezas propias y enemigas.
+        """
+        if not server.board:
+            return "Tablero no iniciado."
+
+        my_stones = []
+        opp_stones = []
+        
+        # BUG FIX: Use rotation_angle instead of angle
+        for pos, stone in server.board.stones.items():
+            info = f"{stone.stone_type.name} en {pos} (Rotación: {stone.rotation_angle}°)"
+            if stone.player == self.player_id:
+                my_stones.append(info)
+            else:
+                opp_stones.append(info)
+        
+        my_stones_str = "\n".join([f"- {s}" for s in my_stones]) if my_stones else "Ninguna."
+        opp_stones_str = "\n".join([f"- {s}" for s in opp_stones]) if opp_stones else "Ninguna."
+        
+        # Calculate scores for strategic context
+        score_data = server.board.calculate_score()
+        my_score = score_data[f"player{self.player_id}"]
+        opp_score = score_data[f"player{3-self.player_id}"]
+        
+        # Strategic Directive
+        if my_score > opp_score + 10:
+            directive = "ESTÁS GANANDO: Mantén la ventaja, protege tus piezas clave (Prismas/Splitters)."
+        elif opp_score > my_score + 10:
+            directive = "VAS PERDIENDO: ¡Riesgo necesario! Busca capturas con láser o expande agresivamente."
+        else:
+            directive = "ESTADO EQUILIBRADO: Busca una apertura táctica o línea de tiro clara."
+
+        return f"""
+        MIS PIEZAS (Jugador {self.player_id}):
+        {my_stones_str}
+        
+        PIEZAS ENEMIGAS (Oponente):
+        {opp_stones_str}
+        
+        ENERGÍA: Yo({server.board.player_energy[self.player_id]}), Oponente({server.board.player_energy[3-self.player_id]})
+        PUNTUACIÓN TERRITORIO: Yo({my_score}), Oponente({opp_score})
+        
+        DIRECTIVA ESTRATÉGICA: {directive}
+        """
+
     def get_move(self, server: GameServer) -> dict:
         """Consulta a Ollama para obtener el siguiente movimiento."""
-        board_str = self.render_board_ascii(server)
+        board_ascii = self.render_board_ascii(server)
+        structured_state = self.get_structured_board_state(server)
         all_valid_actions, valid_sample = self.get_valid_actions_summary(server)
         
-        # Check for immediate winning moves or simple logic before LLM (optional, but good for speed)
-        # For now, we rely on LLM + random fallback
+        # LOGGING REFINEMENT: Summaries for log file
+        mech_summary = self.mechanics_content[:300] + "\n... [MECHANICS CONTENT TRUNCATED FOR LOG] ..."
+        play_summary = (self.playbook_content[:300] + "\n... [PLAYBOOKS CONTENT TRUNCATED FOR LOG] ...") if len(self.playbook_content) > 500 else self.playbook_content
 
-        prompt = f"""
-        Estás jugando un juego de estrategia por turnos llamado Luminamics.
+        # PROMPT CONSTRUCTION (MAPPING USER SNIPPET STYLE + ADVANCED DATA)
+        prompt_template = """
+        Estás jugando un juego de estrategia llamado Luminamics.
         
         CONTEXTO DE REGLAS (RESUMEN):
-        {self.mechanics_content[:1500]}... (resumido)
+        {mechanics}
         
         ESTRATEGIA ACTIVA (PLAYBOOK):
-        {self.playbook_content}
+        {playbooks}
         
         TU ROL:
-        Eres el JUGADOR {self.player_id}.
-        Tus piezas se representan con {self.my_symbols}.
-        El oponente son {self.opp_symbols}.
+        Eres el JUGADOR {player_id}.
+        Tus piezas ({my_symbols}) vs Enemigo ({opp_symbols}).
         
-        ESTADO ACTUAL DEL TABLERO:
-        {board_str}
+        ESTADO DEL TABLERO (ASCII):
+        {board_ascii}
+        
+        ANÁLISIS TÁCTICO:
+        {structured_state}
         
         ACCIONES DISPONIBLES (MUESTRA):
         {valid_sample}
         
-        INSTRUCCIONES:
-        1. Analiza el tablero. Busca capturar piezas enemigas disparando láseres o protegiendo tu territorio.
+        TU MISIÓN:
+        1. Analiza el tablero. Busca capturar piezas enemigas o proteger tu territorio.
         2. Selecciona UNA acción válida.
-        3. RESPONDE SOLO CON UN JSON VÁLIDO.
+        3. ¡NO PASAR! Debes jugar una ficha o disparar. El 'pass' está prohibido si hay opciones.
         
-        Formato JSON esperado:
-        {{"type": "place", "x": 5, "y": 5, "stone_type": "MIRROR"}}
-        o
-        {{"type": "rotate", "x": 5, "y": 5, "angle": 90}}
-        o
-        {{"type": "laser", "x": 5, "y": 5, "dx": 1, "dy": 0}}
+        FORMATO DE RESPUESTA (JSON PURO):
+        Incluye un campo "thought" para explicar tu razonamiento táctico.
         
-        TU RESPUESTA JSON:
+        {{
+          "thought": "Basado en PUNTUACIÓN y PIEZAS ENEMIGAS, decido que...",
+          "type": "place", "x": 0, "y": 0, "stone_type": "PRISM"
+        }}
+        
+        Otras acciones:
+        {{ "type": "rotate", "x": 5, "y": 5, "angle": 90 }}
+        {{ "type": "laser", "x": 5, "y": 5, "dx": 1, "dy": 0 }}
         """
+        
+        # 1. Real Prompt (Full Content)
+        prompt = prompt_template.format(
+            player_id=self.player_id,
+            mechanics=self.mechanics_content,
+            playbooks=self.playbook_content,
+            my_symbols=self.my_symbols,
+            opp_symbols=self.opp_symbols,
+            board_ascii=board_ascii,
+            structured_state=structured_state,
+            valid_sample=valid_sample
+        )
+        
+        # 2. Log Prompt (Truncated for readability)
+        log_prompt = prompt_template.format(
+            player_id=self.player_id,
+            mechanics=mech_summary,
+            playbooks=play_summary,
+            my_symbols=self.my_symbols,
+            opp_symbols=self.opp_symbols,
+            board_ascii=board_ascii,
+            structured_state=structured_state,
+            valid_sample=valid_sample
+        )
 
         try:
             print(f"Agente {self.player_id} ({self.model_name}) pensando...")
+            
+            # Print elegant log prompt
+            print(f"\n--- PROMPT LOG (Player {self.player_id}) ---\n{log_prompt}\n--- PROMPT END ---")
+            
             response = ollama.generate(
                 model=self.model_name, 
                 prompt=prompt, 
                 format="json",
-                options={"temperature": 0.3} # Low temperature for more consistent JSON
+                options={"temperature": 0.2, "num_ctx": 4096}
             )
             
-            clean_json = response['response'].replace("```json", "").replace("```", "").strip()
+            raw_response = response['response']
+            print(f"\n--- RAW RESPONSE ---\n{raw_response}\n--- END RESPONSE ---")
+            
+            clean_json = raw_response.replace("```json", "").replace("```", "").strip()
             action = json.loads(clean_json)
-            print(f"Agente sugirió: {action}")
+            
+            if "thought" in action:
+                print(f"💭 PENSAMIENTO (Agente {self.player_id}): {action['thought']}")
+                
             return action
         except Exception as e:
             print(f"Error en Agente {self.player_id}: {e}")
