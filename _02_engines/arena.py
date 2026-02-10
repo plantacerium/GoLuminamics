@@ -15,7 +15,7 @@ DELAY_ENTRE_TURNOS = 3.0
 
 def main():
     # 1. Inicializar Servidor y Agentes
-    server = GameServer(grid_size=10) # Reducido a 10x10 para que sea más rápido para la IA
+    server = GameServer(grid_size=9) # Reducido a 9x9 para que sea más rápido para la IA
     server.reset({"starting_energy": 10})
     
     # El nuevo Agente carga mechanics y playbooks automáticamente
