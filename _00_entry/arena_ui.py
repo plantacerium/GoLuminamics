@@ -18,16 +18,16 @@ class DualLogger:
 
     def write(self, message):
         try:
-            self.terminal.write(message)
             if self.enabled:
+                self.terminal.write(message)
                 self.log_file.write(message)
                 self.log_file.flush() # Ensure it's written immediately
         except Exception:
              pass # Prevent crashes on logging errors
 
     def flush(self):
-        self.terminal.flush()
         if self.enabled:
+            self.terminal.flush()
             self.log_file.flush()
 
 class ArenaWindow(MainWindow):
@@ -135,12 +135,17 @@ class ArenaWindow(MainWindow):
             print("INFO: Pass Turn re-enabled.")
 
     def handle_logging_toggle(self, state):
-        """Habilita o deshabilita el registro en archivo."""
+        """Habilita o deshabilita el registro en archivo y consola."""
         is_enabled = (state == 2) # 2 is Qt.Checked
         if hasattr(self, 'logger'):
-            self.logger.enabled = is_enabled
             status = "HABILITADO" if is_enabled else "DESHABILITADO"
-            print(f"=== REGISTRO EN ARCHIVO {status} ===")
+            if not is_enabled:
+                print(f"=== REGISTRO {status} ===")
+            
+            self.logger.enabled = is_enabled
+            
+            if is_enabled:
+                print(f"=== REGISTRO {status} ===")
 
     def play_next_turn(self):
         if self.board.board_state.game_over:
