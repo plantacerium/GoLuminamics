@@ -59,7 +59,7 @@ python -m _00_entry.main_game
 # Launch the replayer
 python -m _00_entry.main_replayer
 # Launch the AI Arena (Spectator Mode)
-python _00_entry.arena_ui.py
+python -m _00_entry.arena_ui
 ```
 
 ---
@@ -67,13 +67,13 @@ python _00_entry.arena_ui.py
 ### 🤖 AI Arena CLI Arguments
 ```bash
 # Default run (All playbooks)
-python _00_entry.arena_ui.py
+python -m _00_entry.arena_ui
 
 # Specify Models
-python _00_entry.arena_ui.py --p1 llama3 --p2 gemma3:4b
+python -m _00_entry.arena_ui --p1 llama3 --p2 gemma3:4b
 
 # Single Strategy Mode (Faster context)
-python _00_entry.arena_ui.py --single-strategy
+python -m _00_entry.arena_ui --single-strategy
 ```
 
 
@@ -160,4 +160,5 @@ For information about third-party dependencies and their licenses, please see [T
 ⭐ **Star us on GitHub** if you enjoy the game! ⭐
 
 </div>
+
 
