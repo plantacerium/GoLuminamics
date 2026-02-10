@@ -220,45 +220,59 @@ class ArenaWindow(MainWindow):
 
     def execute_ai_move(self, action):
         """Traduce el JSON de la IA a acciones de la UI. Retorna True si éxito."""
-        action_type = action.get("type")
-        
-        if action_type == "place":
-            x, y = action.get("x"), action.get("y")
-            stone_type = action.get("stone_type", "PRISM").upper()
+        try:
+            action_type = action.get("type")
             
-            if 0 <= x < self.board.grid_size and 0 <= y < self.board.grid_size:
-                self.controls.set_stone_type(stone_type) 
-                if self.board.place_stone((x, y), stone_type, self.board.current_player):
+            if action_type == "place":
+                x = int(action.get("x", 0))
+                y = int(action.get("y", 0))
+                stone_type = action.get("stone_type", "PRISM").upper()
+                
+                limit = self.board.board_state.grid_size
+                if 0 <= x < limit and 0 <= y < limit:
+                    self.controls.set_stone_type(stone_type) 
+                    if self.board.place_stone((x, y), stone_type, self.board.current_player):
+                        return True
+                print(f"Colocación inválida en {x}, {y} (Límite: {limit})")
+                return False
+
+            elif action_type == "rotate":
+                x = int(action.get("x", 0))
+                y = int(action.get("y", 0))
+                angle = float(action.get("angle", 0))
+                
+                stone = self.board.board_state.get_stone_at((x, y))
+                if stone and stone.player == self.board.current_player:
+                    # Usamos el método de la UI para que se vea y actualice todo
+                    self.board.rotate_stone_to((x, y), angle)
+                    self.on_stone_rotated((x, y), angle) 
+                    self.board.end_turn() # La rotación TAMBIÉN consume el turno de la IA
                     return True
-            print(f"Colocación inválida en {x}, {y}")
-            return False
+                print(f"Rotación inválida: No hay piedra propia en {x}, {y}")
+                return False
 
-        elif action_type == "rotate":
-            x, y = action.get("x"), action.get("y")
-            angle = action.get("angle", 0)
-            
-            stone = self.board.board_state.get_stone_at((x, y))
-            if stone and stone.player == self.board.current_player:
-                self.board.board_state.set_rotation_to((x, y), angle)
-                self.board.update() 
-                self.on_stone_rotated((x, y), angle)
+            elif action_type == "laser":
+                x = int(action.get("x", 0))
+                y = int(action.get("y", 0))
+                dx = float(action.get("dx", 0))
+                dy = float(action.get("dy", 0))
+                
+                if dx == 0 and dy == 0:
+                    return False
+                    
+                start = (x, y)
+                direction = (dx, dy)
+                # Laser siempre se considera un intento válido de jugar
+                self.handle_laser_mouse(start, direction, self.board.current_player)
                 return True
+
+            elif action_type == "pass":
+                return False 
+                
             return False
-
-        elif action_type == "laser":
-            x, y = action.get("x"), action.get("y")
-            dx, dy = action.get("dx"), action.get("dy")
-            start = (x, y)
-            direction = (dx, dy)
-            # Laser is always valid if points are on board (UI handles it)
-            # We assume success if we trigger it
-            self.handle_laser_mouse(start, direction, self.board.current_player)
-            return True
-
-        elif action_type == "pass":
-            return False # Treat explicit pass as failure to trigger retry
-            
-        return False
+        except (ValueError, TypeError, Exception) as e:
+            print(f"Error parseando o ejecutando acción de IA: {e}")
+            return False
 
     def auto_save_game(self):
         """Guarda la partida automáticamente en games/"""
