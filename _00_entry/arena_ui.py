@@ -109,6 +109,15 @@ class ArenaWindow(MainWindow):
             self.stop_match()
             self.start_btn.setText("START AI MATCH")
 
+    def handle_infinite_score_change(self, enabled):
+        """Override to disable 'Pass' button when No Mercy is active."""
+        super().handle_infinite_score_change(enabled)
+        self.controls.pass_btn.setEnabled(not enabled)
+        if enabled:
+            print("INFO: Pass Turn disabled for 'No Mercy' ruleset.")
+        else:
+            print("INFO: Pass Turn re-enabled.")
+
     def play_next_turn(self):
         if self.board.board_state.game_over:
             self.turn_timer.stop()
@@ -159,15 +168,49 @@ class ArenaWindow(MainWindow):
             # El Grid Size se pasa actualizado aquí cada turno
             dummy_server = DummyServer(self.board.board_state, self.board.grid_size)
             
-            action = agent.get_move(dummy_server)
+            # RETRY LOOP (Max 3 attempts to avoid passing)
+            max_retries = 3
+            action_success = False
             
-            if action:
+            for attempt in range(max_retries):
+                # Only print retry attempts after first
+                if attempt > 0:
+                    print(f"Intento {attempt+1}/{max_retries} para Agente {current_pid}...")
+                
+                action = agent.get_move(dummy_server)
+                
+                if not action:
+                    print(f"IA no devolvió JSON válido (Intento {attempt+1}).")
+                    continue
+                    
+                if action.get("type") == "pass":
+                    print(f"IA intentó pasar turno (Intento {attempt+1}). Forzando reintento...")
+                    continue
+
                 if "thought" in action:
                     print(f"💭 PENSAMIENTO ({agent.model_name}): {action['thought']}")
-                self.execute_ai_move(action)
-            else:
-                print("IA no devolvió acción válida. Pasando turno.")
-                self.handle_pass()
+                
+                # Try to execute
+                if self.execute_ai_move(action):
+                    action_success = True
+                    break
+                else:
+                    print(f"Movimiento {action.get('type')} fallido (Intento {attempt+1}).")
+            
+            if not action_success:
+                if self.board.board_state.infinite_score:
+                    print("INFO: 'No Mercy' activo. Forzando movimiento aleatorio en lugar de pasar.")
+                    valid_actions = dummy_server.get_valid_actions().get("valid_actions", [])
+                    if valid_actions:
+                        fallback_action = random.choice(valid_actions)
+                        print(f"RESURRECCIÓN: Ejecutando acción aleatoria {fallback_action.get('type')}")
+                        self.execute_ai_move(fallback_action)
+                    else:
+                        print("CRÍTICO: No hay movimientos posibles. Pasando turno.")
+                        self.handle_pass()
+                else:
+                    print("IA falló todas las opciones o insistió en pasar. Pasando turno.")
+                    self.handle_pass()
                 
         except Exception as e:
             print(f"Error en turno de IA: {e}")
@@ -176,54 +219,46 @@ class ArenaWindow(MainWindow):
             self.is_thinking = False
 
     def execute_ai_move(self, action):
-        """Traduce el JSON de la IA a acciones de la UI."""
+        """Traduce el JSON de la IA a acciones de la UI. Retorna True si éxito."""
         action_type = action.get("type")
         
         if action_type == "place":
             x, y = action.get("x"), action.get("y")
             stone_type = action.get("stone_type", "PRISM").upper()
             
-            # Verificar validez básica
             if 0 <= x < self.board.grid_size and 0 <= y < self.board.grid_size:
-                # Set stone type in UI controls (hacky but updates state correctly)
                 self.controls.set_stone_type(stone_type) 
-                # Place stone
-                self.board.place_stone((x, y), stone_type, self.board.current_player)
-            else:
-                print(f"Coordenadas inválidas: {x}, {y}")
-                self.handle_pass()
+                if self.board.place_stone((x, y), stone_type, self.board.current_player):
+                    return True
+            print(f"Colocación inválida en {x}, {y}")
+            return False
 
         elif action_type == "rotate":
             x, y = action.get("x"), action.get("y")
             angle = action.get("angle", 0)
             
-            # En la UI, rotation es on_click derecho -> +45 grados o set manual
-            # Vamos a intentar establecer la rotación directamente en el estado
             stone = self.board.board_state.get_stone_at((x, y))
             if stone and stone.player == self.board.current_player:
                 self.board.board_state.set_rotation_to((x, y), angle)
-                self.board.update() # Repaint
-                self.on_stone_rotated((x, y), angle) # Trigger log/events
-            else:
-                self.handle_pass()
+                self.board.update() 
+                self.on_stone_rotated((x, y), angle)
+                return True
+            return False
 
         elif action_type == "laser":
-            # La UI requiere un punto de inicio y dirección
-            # La IA puede dar 'x, y' y 'dx, dy'
-            # Convertimos esto a una entrada de mouse simulada o llamada directa
             x, y = action.get("x"), action.get("y")
             dx, dy = action.get("dx"), action.get("dy")
-            
             start = (x, y)
             direction = (dx, dy)
+            # Laser is always valid if points are on board (UI handles it)
+            # We assume success if we trigger it
             self.handle_laser_mouse(start, direction, self.board.current_player)
+            return True
 
         elif action_type == "pass":
-            self.handle_pass()
+            return False # Treat explicit pass as failure to trigger retry
             
-        else:
-            print(f"Acción desconocida: {action_type}")
-            self.handle_pass()
+        return False
 
     def auto_save_game(self):
         """Guarda la partida automáticamente en games/"""
