@@ -468,6 +468,8 @@ class GameBoard(QGraphicsView):
             self.rotate_stone_to(pos, rotation) # Apply visual rotation
             self.stone_placed.emit(pos, stone_type_name)
             self.end_turn()
+            return True
+        return False
 
     def _draw_stone(self, pos, stone_type_name, player):
         """Draw stone visual with 3D depth and optional texture."""
