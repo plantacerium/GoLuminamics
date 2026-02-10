@@ -10,9 +10,34 @@ from _00_entry.main_game import MainWindow
 # Importamos nuestros agentes IA
 from _02_engines.ai_player import AIAgent
 
+class DualLogger:
+    def __init__(self, filename):
+        self.terminal = sys.stdout
+        self.log = open(filename, "a", encoding='utf-8')
+
+    def write(self, message):
+        try:
+            self.terminal.write(message)
+            self.log.write(message)
+            self.log.flush() # Ensure it's written immediately
+        except Exception:
+             pass # Prevent crashes on logging errors
+
+    def flush(self):
+        self.terminal.flush()
+        self.log.flush()
+
 class ArenaWindow(MainWindow):
     def __init__(self, p1_model="gemma3:4b", p2_model="gemma3:4b", use_all_playbooks=True):
         super().__init__()
+        
+        # --- CONFIGURAR LOGGING ---
+        if not os.path.exists("logs"):
+            os.makedirs("logs")
+        log_filename = f"logs/match_{time.strftime('%Y%m%d-%H%M%S')}.txt"
+        sys.stdout = DualLogger(log_filename)
+        print(f"=== INICIO DE REGISTRO EN: {log_filename} ===")
+        
         self.setWindowTitle("GoLuminamics - AI Arena")
         
         # Configurar agentes
