@@ -801,14 +801,73 @@ class GameBoard(QGraphicsView):
             self.scene.removeItem(item)
         self.laser_items.clear()
         
-        # Add to board state for scoring? No, board_state calculates on demand.
-        # But we need to update laser sources in board state for persistence/re-drawing?
-        # The main_game calls calculate_score which uses board_state.laser_sources.
-        # We should update board_state.laser_sources if this is a permanent laser?
-        # For now, let's assume this visualizer is for transient shots or the loop in main_game handles it.
-        # Actually, main_game calls board.shoot_laser.
-        # Let's see if we need to return captured stones.
+        # Calculate path
+        paths = self.laser_calc.calculate_path(
+            (start_pos[0] + 0.5, start_pos[1] + 0.5),
+            direction,
+            self.board_state.stones
+        )
         
+        # Draw new lasers
+        laser_color = QColor("#FF0000") if player == 1 else QColor("#0000FF")
+        pen = QPen(laser_color, 4)
+        pen.setCapStyle(Qt.RoundCap)
+        
+        for segment in paths:
+            start_x = self.margin_horizontal + (segment[0][0] - 0.5) * self.cell_size
+            start_y = self.margin_vertical + (segment[0][1] - 0.5) * self.cell_size
+            end_x = self.margin_horizontal + (segment[1][0] - 0.5) * self.cell_size
+            end_y = self.margin_vertical + (segment[1][1] - 0.5) * self.cell_size
+            
+            line = self.scene.addLine(start_x, start_y, end_x, end_y, pen)
+            line.setZValue(5) # Top layer
+            self.laser_items.append(line)
+            
+        # Return captured stones for game logic processing
+        return self.board_state.process_laser_captures(player, paths)
+
+    def highlight_stones(self, positions):
+        """Highlight specific stones or cells."""
+        self.clear_highlights()
+        
+        highlight_pen = QPen(QColor("#00FF00"), 3)
+        highlight_brush = QBrush(QColor(0, 255, 0, 50))
+        
+        for pos in positions:
+            x, y = pos
+            center_x = self.margin_horizontal + x * self.cell_size
+            center_y = self.margin_vertical + y * self.cell_size
+            radius = self.cell_size / 2 - 2
+            
+            highlight = self.scene.addEllipse(
+                center_x - radius - 2, 
+                center_y - radius - 2, 
+                (radius + 2) * 2, 
+                (radius + 2) * 2,
+                highlight_pen, 
+                highlight_brush
+            )
+            highlight.setZValue(0.5) # Behind stone, above board
+            
+            # Store for cleanup - using a new attribute if needed or reusing selection_item list
+            if not hasattr(self, 'highlight_items'):
+                self.highlight_items = []
+            self.highlight_items.append(highlight)
+
+    def clear_highlights(self):
+        """Clear all highlights."""
+        if hasattr(self, 'highlight_items'):
+            for item in self.highlight_items:
+                self.scene.removeItem(item)
+            self.highlight_items.clear()
+    
+    def on_timer_tick(self):
+        """Update timers."""
+        # This belongs in MainWindow really, or BoardState should track time?
+        # For now just emitting signal based on some external or internal logic
+        pass
+
+
         from _02_engines.laser import LaserCalculator2D
         # Use existing calculator
         paths = self.laser_calc.calculate_path(start_pos, direction, self.board_state.stones)
