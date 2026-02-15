@@ -1,4 +1,4 @@
-# Playbook: The Laser Web
+# Playbook: The Swap Tactics
 
 ## Game Mode Configuration
 - **Mode**: 100% Territory (Total Domination)
@@ -10,12 +10,13 @@
 - **Modes Available**: Turn-Based (classic), Realtime (velocity-based movement)
 
 ## Strategy Overview
-**Maximize beam intersections for stability.**
+**Swapping positions of a Mirror and a Prism to change beam behavior.**
 
 ## Core Tactics
-- Create a 'net' pattern.
-- Ensure every stone is hit by at least two lasers.
-- Hard to disrupt.
+- Place a MIRROR and a PRISM near each other.
+- Physically move them to swap their locations.
+- Instantly change a reflection to a transmission.
+- Trick the opponent into a false sense of security.
 
 ## Execution Plan for 39x39 Grid
 1.  **Early Game (0-10 mins)**: Establish the pattern foundation. Do not worry about energy costs.

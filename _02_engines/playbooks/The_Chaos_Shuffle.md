@@ -1,4 +1,4 @@
-# Playbook: The Laser Web
+# Playbook: The Chaos Shuffle
 
 ## Game Mode Configuration
 - **Mode**: 100% Territory (Total Domination)
@@ -10,12 +10,13 @@
 - **Modes Available**: Turn-Based (classic), Realtime (velocity-based movement)
 
 ## Strategy Overview
-**Maximize beam intersections for stability.**
+**Randomly shuffling stone positions to prevent enemy lock-on.**
 
 ## Core Tactics
-- Create a 'net' pattern.
-- Ensure every stone is hit by at least two lasers.
-- Hard to disrupt.
+- Every turn, move a random stone by 1 tile.
+- Ensure no stone stays static for > 3 turns.
+- Prevent the enemy from pre-calculating shots.
+- Create a shifting, noisy battlefield.
 
 ## Execution Plan for 39x39 Grid
 1.  **Early Game (0-10 mins)**: Establish the pattern foundation. Do not worry about energy costs.

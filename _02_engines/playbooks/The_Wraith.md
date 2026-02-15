@@ -1,4 +1,4 @@
-# Playbook: The Laser Web
+# Playbook: The Wraith
 
 ## Game Mode Configuration
 - **Mode**: 100% Territory (Total Domination)
@@ -10,12 +10,13 @@
 - **Modes Available**: Turn-Based (classic), Realtime (velocity-based movement)
 
 ## Strategy Overview
-**Maximize beam intersections for stability.**
+**Exploit board wrapping to appear behind enemy lines.**
 
 ## Core Tactics
-- Create a 'net' pattern.
-- Ensure every stone is hit by at least two lasers.
-- Hard to disrupt.
+- Move stones to the board edge, wrap to the opposite side.
+- Place BLOCKERs at your edge to protect your flank.
+- Use wrap-around to create impossible-to-trace laser paths.
+- Strike from where the opponent least expects.
 
 ## Execution Plan for 39x39 Grid
 1.  **Early Game (0-10 mins)**: Establish the pattern foundation. Do not worry about energy costs.

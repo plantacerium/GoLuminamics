@@ -1,4 +1,4 @@
-# Playbook: The Laser Web
+# Playbook: The Fortress
 
 ## Game Mode Configuration
 - **Mode**: 100% Territory (Total Domination)
@@ -10,12 +10,13 @@
 - **Modes Available**: Turn-Based (classic), Realtime (velocity-based movement)
 
 ## Strategy Overview
-**Maximize beam intersections for stability.**
+**Use BLOCKER stones to create impenetrable defensive walls.**
 
 ## Core Tactics
-- Create a 'net' pattern.
-- Ensure every stone is hit by at least two lasers.
-- Hard to disrupt.
+- Place BLOCKERS to absorb enemy lasers completely.
+- Create fortress walls around your territory.
+- Use BLOCKERS as shields for your SPLITTER networks.
+- No laser passes through a BLOCKER — total absorption.
 
 ## Execution Plan for 39x39 Grid
 1.  **Early Game (0-10 mins)**: Establish the pattern foundation. Do not worry about energy costs.

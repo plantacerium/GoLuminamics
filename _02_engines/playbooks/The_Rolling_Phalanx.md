@@ -1,4 +1,4 @@
-# Playbook: The Laser Web
+# Playbook: The Rolling Phalanx
 
 ## Game Mode Configuration
 - **Mode**: 100% Territory (Total Domination)
@@ -10,12 +10,13 @@
 - **Modes Available**: Turn-Based (classic), Realtime (velocity-based movement)
 
 ## Strategy Overview
-**Maximize beam intersections for stability.**
+**Advancing a line of Blockers/Mirrors uniformly.**
 
 ## Core Tactics
-- Create a 'net' pattern.
-- Ensure every stone is hit by at least two lasers.
-- Hard to disrupt.
+- Form a wall of BLOCKERS side-by-side.
+- Move them all forward 1 step per turn (Realtime).
+- Push the enemy back physically.
+- Crush their territory with a moving wall.
 
 ## Execution Plan for 39x39 Grid
 1.  **Early Game (0-10 mins)**: Establish the pattern foundation. Do not worry about energy costs.

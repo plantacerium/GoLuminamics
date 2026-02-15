@@ -1,4 +1,4 @@
-# Playbook: The Laser Web
+# Playbook: The Ricochet Trap
 
 ## Game Mode Configuration
 - **Mode**: 100% Territory (Total Domination)
@@ -10,12 +10,13 @@
 - **Modes Available**: Turn-Based (classic), Realtime (velocity-based movement)
 
 ## Strategy Overview
-**Maximize beam intersections for stability.**
+**Geometric traps using Mirrors to hit blind spots.**
 
 ## Core Tactics
-- Create a 'net' pattern.
-- Ensure every stone is hit by at least two lasers.
-- Hard to disrupt.
+- Place MIRRORS at obfuscated angles.
+- Calculate double-bounces to hit behind enemy walls.
+- Use the board edge as a virtual mirror (if mechanics allow) or just use standard reflection.
+- Catch the enemy off-guard with non-cardinal attacks.
 
 ## Execution Plan for 39x39 Grid
 1.  **Early Game (0-10 mins)**: Establish the pattern foundation. Do not worry about energy costs.

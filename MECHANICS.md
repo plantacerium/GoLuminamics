@@ -72,6 +72,13 @@ Energy is checked before actions, consumed after successful placement, and recha
 - **Use Cases**: Maximizing territory coverage, multi-target captures
 - **Strategic Value**: Territory maximization and area control
 
+### Blocker (Absorb)
+- **Symbol**: 🧱
+- **Energy Cost**: 1
+- **Effect**: Completely absorbs laser — no reflection, no transmission
+- **Use Cases**: Blocking opponent lasers, creating defensive walls
+- **Strategic Value**: Pure defense — stops all laser paths on contact
+
 ---
 
 ## 🌟 Laser System
@@ -83,7 +90,7 @@ Energy is checked before actions, consumed after successful placement, and recha
   - Prism: Continue straight through
   - Mirror: Reflect at angle (depends on rotation)
   - Splitter: Branch into two paths
-- **Termination**: Board edge or path limit reached
+- **Termination**: Board edge, path limit, or **Blocker stone** reached
 
 ### Laser Effects
 - **Territory Illumination**: Illuminated intersections count as territory
@@ -92,6 +99,34 @@ Energy is checked before actions, consumed after successful placement, and recha
 - **Path Display**: Full path visualization showing all reflections and splits
 
 ---
+
+## ⚡ Realtime Mode
+
+### Overview
+Optional game mode where **both players act simultaneously** with continuous movement.
+
+### How It Works
+- **Tick Rate**: 500ms per game tick
+- **Simultaneous Play**: Both players execute actions each tick (no alternating turns)
+- **Clock Start**: Game timer starts **only** when "START AI MATCH" is clicked
+- **Movement**: Stones can **move** to adjacent cells (8 directions + diagonals)
+- **Velocity**: Each stone has a velocity value (default 1) determining moves per tick
+
+### Movement Types
+
+#### Linear Movement
+- 8 directional movement (cardinal + diagonal)
+- Board **wraps around**: moving past one edge teleports to the opposite side
+
+#### Curved Movement (Bézier)
+- Stones can follow **real quadratic Bézier curves** through a control point
+- Action format: `{from, control_point, end_point}`
+- The stone's final position is the curve endpoint (wrapped to grid)
+
+### Realtime Rules
+- Placing, rotating, and shooting lasers all still work
+- `pass` actions are acceptable (stone stays still)
+- No turn-end penalty for failed actions
 
 ## 🏆 Scoring System
 

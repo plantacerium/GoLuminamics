@@ -1,4 +1,4 @@
-# Playbook: The Laser Web
+# Playbook: The Aggressive Ram
 
 ## Game Mode Configuration
 - **Mode**: 100% Territory (Total Domination)
@@ -10,12 +10,13 @@
 - **Modes Available**: Turn-Based (classic), Realtime (velocity-based movement)
 
 ## Strategy Overview
-**Maximize beam intersections for stability.**
+**Moving Blockers directly adjacent to enemy Emitters.**
 
 ## Core Tactics
-- Create a 'net' pattern.
-- Ensure every stone is hit by at least two lasers.
-- Hard to disrupt.
+- Rush a BLOCKER across the board.
+- Park it right in front of the enemy Laser Source.
+- Completely neutralize their offensive capability.
+- Force them to waste moves destroying your cheap blocker.
 
 ## Execution Plan for 39x39 Grid
 1.  **Early Game (0-10 mins)**: Establish the pattern foundation. Do not worry about energy costs.

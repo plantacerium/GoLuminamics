@@ -1,4 +1,4 @@
-# Playbook: The Laser Web
+# Playbook: The Scatter Shot
 
 ## Game Mode Configuration
 - **Mode**: 100% Territory (Total Domination)
@@ -10,12 +10,13 @@
 - **Modes Available**: Turn-Based (classic), Realtime (velocity-based movement)
 
 ## Strategy Overview
-**Maximize beam intersections for stability.**
+**Using a Splitter close to the emitter for wide-angle denial.**
 
 ## Core Tactics
-- Create a 'net' pattern.
-- Ensure every stone is hit by at least two lasers.
-- Hard to disrupt.
+- Place a SPLITTER immediately in front of your Laser Source.
+- Create two divergent beams instantly.
+- Deny a large cone of area to the opponent.
+- Force the opponent to defend two fronts.
 
 ## Execution Plan for 39x39 Grid
 1.  **Early Game (0-10 mins)**: Establish the pattern foundation. Do not worry about energy costs.

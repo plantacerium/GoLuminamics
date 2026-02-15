@@ -6,6 +6,8 @@
 - **Score**: Infinite
 - **Time Limit**: 60 Minutes
 - **Grid Size**: 39x39
+- **Stone Types**: PRISM (transmit), MIRROR (reflect), SPLITTER (branch), BLOCKER (absorb)
+- **Modes Available**: Turn-Based (classic), Realtime (velocity-based movement)
 
 ## Strategy Overview
 **Rapidly fill empty space with low-cost structures.**
@@ -24,3 +26,5 @@
 - Since Energy is Infinite, prefer placing stones over passing.
 - The board is huge. Think in "sectors" rather than individual cells.
 - Aggression is viable because replacement is free.
+- BLOCKER stones completely absorb lasers — use them for defense.
+- In Realtime Mode, use MOVE and CURVE_MOVE to reposition strategically.

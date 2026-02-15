@@ -210,6 +210,10 @@ class UIControls(QWidget):
         self.stone_type_group.addButton(self.splitter_radio)
         stone_layout.addWidget(self.splitter_radio)
         
+        self.blocker_radio = QRadioButton("Blocker (Wall)")
+        self.stone_type_group.addButton(self.blocker_radio)
+        stone_layout.addWidget(self.blocker_radio)
+        
         stone_group.setLayout(stone_layout)
         layout.addWidget(stone_group)
         
@@ -327,6 +331,7 @@ class UIControls(QWidget):
         if self.prism_radio.isChecked(): return "PRISM"
         if self.mirror_radio.isChecked(): return "MIRROR"
         if self.splitter_radio.isChecked(): return "SPLITTER"
+        if self.blocker_radio.isChecked(): return "BLOCKER"
         return "PRISM"
     
     def get_player_color(self):
@@ -376,6 +381,8 @@ class UIControls(QWidget):
             self.mirror_radio.setChecked(True)
         elif stone_type == "SPLITTER":
             self.splitter_radio.setChecked(True)
+        elif stone_type == "BLOCKER":
+            self.blocker_radio.setChecked(True)
 
     def add_extra_action_button(self, widget, index=0):
         """Add an extra button to the actions group."""

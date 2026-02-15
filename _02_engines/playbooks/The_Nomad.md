@@ -1,4 +1,4 @@
-# Playbook: The Laser Web
+# Playbook: The Nomad
 
 ## Game Mode Configuration
 - **Mode**: 100% Territory (Total Domination)
@@ -10,12 +10,13 @@
 - **Modes Available**: Turn-Based (classic), Realtime (velocity-based movement)
 
 ## Strategy Overview
-**Maximize beam intersections for stability.**
+**In Realtime Mode, constantly reposition stones for tactical advantage.**
 
 ## Core Tactics
-- Create a 'net' pattern.
-- Ensure every stone is hit by at least two lasers.
-- Hard to disrupt.
+- Use MOVE actions to shift stones closer to enemy territory.
+- Move in all 8 directions including diagonals.
+- Exploit board wrapping to flank from the opposite edge.
+- Keep stones mobile — never stay static.
 
 ## Execution Plan for 39x39 Grid
 1.  **Early Game (0-10 mins)**: Establish the pattern foundation. Do not worry about energy costs.

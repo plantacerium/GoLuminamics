@@ -34,6 +34,7 @@ class GameServer:
         self.game_over = False
         self.winner = None
         self.victory_reason = None
+        self.realtime_mode = False
         
     def reset(self, config: Dict[str, Any] = None) -> Dict[str, Any]:
         """Reset game to initial state with optional config."""
@@ -49,6 +50,7 @@ class GameServer:
             infinite_energy=config.get("infinite_energy", False),
             infinite_score=config.get("infinite_score", False)
         )
+        self.realtime_mode = config.get("realtime_mode", False)
         self.current_player = 1
         self.turn_count = 0
         self.game_over = False
@@ -57,7 +59,7 @@ class GameServer:
         
         return {
             "observation": self._get_observation(),
-            "info": {"grid_size": self.grid_size}
+            "info": {"grid_size": self.grid_size, "realtime_mode": self.realtime_mode}
         }
     
     def step(self, action: Dict[str, Any]) -> Dict[str, Any]:
@@ -108,6 +110,36 @@ class GameServer:
             if captures:
                 reward = len(captures) * 0.5  # Reward per capture
             success = True
+        
+        elif action_type == "move":
+            from_x = action.get("from_x", 0)
+            from_y = action.get("from_y", 0)
+            to_x = action.get("to_x", 0)
+            to_y = action.get("to_y", 0)
+            from_pos = (from_x, from_y)
+            to_pos = (to_x, to_y)
+            stone = self.board.get_stone_at(from_pos)
+            if stone and stone.player == player:
+                wrapped = self.board.move_stone(from_pos, to_pos)
+                if wrapped is not None:
+                    success = True
+                    reward = 0.01
+        
+        elif action_type == "curve_move":
+            from_x = action.get("from_x", 0)
+            from_y = action.get("from_y", 0)
+            cx = action.get("control_x", 0)
+            cy = action.get("control_y", 0)
+            ex = action.get("end_x", 0)
+            ey = action.get("end_y", 0)
+            from_pos = (from_x, from_y)
+            control_points = [(cx, cy), (ex, ey)]
+            stone = self.board.get_stone_at(from_pos)
+            if stone and stone.player == player:
+                final_pos = self.board.move_stone_along_curve(from_pos, control_points, player)
+                if final_pos is not None:
+                    success = True
+                    reward = 0.02  # Slightly higher reward for curved movement
             
         elif action_type == "pass":
             self.board.pass_turn(player)
@@ -164,7 +196,7 @@ class GameServer:
             for y in range(self.grid_size):
                 for x in range(self.grid_size):
                     if (x, y) not in self.board.stones:
-                        for stone_type in ["PRISM", "MIRROR", "SPLITTER"]:
+                        for stone_type in ["PRISM", "MIRROR", "SPLITTER", "BLOCKER"]:
                             valid.append({
                                 "type": "place",
                                 "x": x, "y": y,
@@ -180,6 +212,42 @@ class GameServer:
                         "x": pos[0], "y": pos[1],
                         "angle": angle
                     })
+        
+        # Move actions (realtime mode only)
+        if self.realtime_mode:
+            for pos, stone in self.board.stones.items():
+                if stone.player == player:
+                    # 8-directional moves with wrapping
+                    directions = [
+                        (0, -1), (0, 1), (-1, 0), (1, 0),
+                        (-1, -1), (1, -1), (-1, 1), (1, 1)
+                    ]
+                    for dx, dy in directions:
+                        nx = (pos[0] + dx) % self.grid_size
+                        ny = (pos[1] + dy) % self.grid_size
+                        if (nx, ny) not in self.board.stones:
+                            valid.append({
+                                "type": "move",
+                                "from_x": pos[0], "from_y": pos[1],
+                                "to_x": nx, "to_y": ny
+                            })
+                    
+                    # Curve move actions (sample 2 random curves per stone)
+                    import random
+                    for _ in range(2):
+                        angle = random.uniform(0, 2 * math.pi)
+                        radius = random.randint(1, min(3, self.grid_size // 4))
+                        cx = pos[0] + radius * math.cos(angle)
+                        cy = pos[1] + radius * math.sin(angle)
+                        ex = int(round(pos[0] + 2 * radius * math.cos(angle))) % self.grid_size
+                        ey = int(round(pos[1] + 2 * radius * math.sin(angle))) % self.grid_size
+                        if (ex, ey) not in self.board.stones:
+                            valid.append({
+                                "type": "curve_move",
+                                "from_x": pos[0], "from_y": pos[1],
+                                "control_x": round(cx, 1), "control_y": round(cy, 1),
+                                "end_x": ex, "end_y": ey
+                            })
         
         # Laser actions (from own stones)
         for pos, stone in self.board.stones.items():
@@ -201,20 +269,21 @@ class GameServer:
     def _get_observation(self) -> List[float]:
         """Get flattened observation vector."""
         if self.board is None:
-            return [0.0] * (self.grid_size * self.grid_size * 7)
+            return [0.0] * (self.grid_size * self.grid_size * 9)
         
         obs = []
         
-        # Per-cell features: [empty, p1_prism, p1_mirror, p1_splitter, p2_prism, p2_mirror, p2_splitter]
+        # Per-cell features: [empty, p1_prism, p1_mirror, p1_splitter, p1_blocker, p2_prism, p2_mirror, p2_splitter, p2_blocker]
         for y in range(self.grid_size):
             for x in range(self.grid_size):
-                cell = [0.0] * 7
+                cell = [0.0] * 9
                 stone = self.board.stones.get((x, y))
                 if stone is None:
                     cell[0] = 1.0  # Empty
                 else:
-                    idx = (stone.player - 1) * 3 + (stone.stone_type.value - 1) + 1
-                    cell[idx] = 1.0
+                    idx = (stone.player - 1) * 4 + (stone.stone_type.value - 1) + 1
+                    if idx < 9:
+                        cell[idx] = 1.0
                 obs.extend(cell)
         
         return obs

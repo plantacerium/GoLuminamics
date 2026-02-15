@@ -56,6 +56,7 @@ class MainWindow(QMainWindow):
         self.controls.splitter_radio.toggled.connect(lambda: self.board.set_stone_type(self.controls.get_selected_stone_type()))
         self.controls.mirror_radio.toggled.connect(lambda: self.board.set_stone_type(self.controls.get_selected_stone_type()))
         self.controls.prism_radio.toggled.connect(lambda: self.board.set_stone_type(self.controls.get_selected_stone_type()))
+        self.controls.blocker_radio.toggled.connect(lambda: self.board.set_stone_type(self.controls.get_selected_stone_type()))
         
         # Connect theme and victory threshold signals
         self.controls.theme_changed.connect(self.board.set_theme)

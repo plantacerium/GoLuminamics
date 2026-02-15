@@ -1,4 +1,4 @@
-# Playbook: The Laser Web
+# Playbook: The Photon Cage
 
 ## Game Mode Configuration
 - **Mode**: 100% Territory (Total Domination)
@@ -10,12 +10,13 @@
 - **Modes Available**: Turn-Based (classic), Realtime (velocity-based movement)
 
 ## Strategy Overview
-**Maximize beam intersections for stability.**
+**Using 4 mirrors to create a localized loop or killing zone.**
 
 ## Core Tactics
-- Create a 'net' pattern.
-- Ensure every stone is hit by at least two lasers.
-- Hard to disrupt.
+- Construct a box of 4 MIRRORS facing inward.
+- Trap an enemy stone inside if possible.
+- Or use it to generate infinite local points (if loops are allowed).
+- Create a 'death zone' where any entry is destroyed.
 
 ## Execution Plan for 39x39 Grid
 1.  **Early Game (0-10 mins)**: Establish the pattern foundation. Do not worry about energy costs.

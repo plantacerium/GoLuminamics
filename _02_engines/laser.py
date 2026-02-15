@@ -120,7 +120,11 @@ class LaserCalculator2D:
                 # Offset to exit stone
                 trans_start = (hit_pos[0] + trans_dir[0]*1.0, hit_pos[1] + trans_dir[1]*1.0) 
                 
-                if stone.stone_type == StoneType.MIRROR:
+                if stone.stone_type == StoneType.BLOCKER:
+                    # Absorb - laser stops here completely
+                    all_paths.append(new_path)
+                    
+                elif stone.stone_type == StoneType.MIRROR:
                     # Reflect
                     queue.append((hit_pos, reflect_dir, new_path, depth + 1))
                     

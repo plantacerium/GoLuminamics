@@ -1,4 +1,4 @@
-# Playbook: The Laser Web
+# Playbook: The Serpent
 
 ## Game Mode Configuration
 - **Mode**: 100% Territory (Total Domination)
@@ -10,12 +10,13 @@
 - **Modes Available**: Turn-Based (classic), Realtime (velocity-based movement)
 
 ## Strategy Overview
-**Maximize beam intersections for stability.**
+**Master curved movement to outmaneuver predictable opponents.**
 
 ## Core Tactics
-- Create a 'net' pattern.
-- Ensure every stone is hit by at least two lasers.
-- Hard to disrupt.
+- Use CURVE_MOVE with Bézier control points for unpredictable paths.
+- Curve around enemy blockers and defenses.
+- Combine curved movement with laser shots for surprise attacks.
+- Think in arcs, not straight lines.
 
 ## Execution Plan for 39x39 Grid
 1.  **Early Game (0-10 mins)**: Establish the pattern foundation. Do not worry about energy costs.

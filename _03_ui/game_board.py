@@ -33,30 +33,35 @@ class GameBoard(QGraphicsView):
         "Classic": {
             "P1": (255, 50, 50),    # Red
             "P2": (50, 50, 255),    # Blue
+            "Blocker": (40, 40, 40), # Dark Grey
             "Grid": (80, 80, 80),
             "Background": "#202025"
         },
         "Neon": {
             "P1": (255, 0, 255),    # Magenta
             "P2": (0, 255, 255),    # Cyan
+            "Blocker": (10, 10, 20), # Deep Void
             "Grid": (40, 40, 60),
             "Background": "#050510"
         },
         "Pastel": {
             "P1": (255, 180, 180),  # Soft Red
             "P2": (180, 180, 255),  # Soft Blue
+            "Blocker": (100, 100, 110), # Slate
             "Grid": (150, 150, 150),
             "Background": "#F0F0F5"
         },
         "Forest": {
             "P1": (255, 140, 0),    # Orange
             "P2": (50, 200, 50),    # Green
+            "Blocker": (60, 45, 30), # Dark Wood
             "Grid": (60, 80, 60),
             "Background": "#152015"
         },
         "Real Stone": {
             "P1": "texture_ruby.png",
             "P2": "texture_sapphire.png",
+            "Blocker": "texture_obsidian.png",
             "Grid": (60, 60, 60),
             "Background": "#1A1A1D"
         }
@@ -494,6 +499,8 @@ class GameBoard(QGraphicsView):
                     texture_filename = "texture_slate.png"
                 elif stone_type_name == "SPLITTER":
                     texture_filename = "texture_gold.png"
+                elif stone_type_name == "BLOCKER":
+                    texture_filename = theme.get("Blocker", "texture_obsidian.png")
                 else: # PRISM or others
                     # Use player specific gem
                     texture_filename = theme["P1"] if player == 1 else theme["P2"]
@@ -556,27 +563,47 @@ class GameBoard(QGraphicsView):
             
             if self.current_theme in self.THEMES:
                 theme = self.THEMES[self.current_theme]
-                base_color = theme["P1"] if player == 1 else theme["P2"]
-                c = QColor(*base_color) if isinstance(base_color, tuple) else QColor(base_color)
                 
-                if stone_type_name == "PRISM":
-                    gradient.setColorAt(0, c.lighter(180))
-                    gradient.setColorAt(0.4, c.lighter(120))
-                    gradient.setColorAt(0.8, c)
-                    gradient.setColorAt(1, c.darker(140))
-                elif stone_type_name == "MIRROR":
-                    gradient.setColorAt(0, QColor("#FFFFFF"))
-                    gradient.setColorAt(0.3, QColor("#F0F0F0"))
-                    gradient.setColorAt(0.7, QColor("#C0C0C0"))
-                    gradient.setColorAt(1, QColor("#808080"))
-                elif stone_type_name == "SPLITTER":
-                    gradient.setColorAt(0, QColor("#FFEB3B"))
-                    gradient.setColorAt(0.4, QColor("#FFC107"))
-                    gradient.setColorAt(0.8, QColor("#FF8F00"))
-                    gradient.setColorAt(1, QColor("#E65100"))
+                if stone_type_name == "BLOCKER":
+                    # BLOCKER always uses theme-specific Blocker color
+                    blocker_color = theme.get("Blocker", (40, 40, 50))
+                    if isinstance(blocker_color, tuple):
+                        bc = QColor(*blocker_color)
+                    else:
+                        bc = QColor(40, 40, 50)  # Fallback if Blocker is a texture filename
+                    gradient.setColorAt(0, bc.lighter(150))
+                    gradient.setColorAt(0.3, bc.lighter(110))
+                    gradient.setColorAt(0.7, bc.darker(130))
+                    gradient.setColorAt(1, bc.darker(180))
                 else:
-                    gradient.setColorAt(0, c.lighter(150))
-                    gradient.setColorAt(1, c)
+                    # For PRISM/MIRROR/SPLITTER, use player color
+                    base_color = theme["P1"] if player == 1 else theme["P2"]
+                    if isinstance(base_color, tuple):
+                        c = QColor(*base_color)
+                    elif isinstance(base_color, str) and not base_color.endswith(".png"):
+                        c = QColor(base_color)
+                    else:
+                        # Real Stone fallback - texture missing, use neutral color
+                        c = QColor(180, 180, 180) if player == 2 else QColor(80, 80, 80)
+                    
+                    if stone_type_name == "PRISM":
+                        gradient.setColorAt(0, c.lighter(180))
+                        gradient.setColorAt(0.4, c.lighter(120))
+                        gradient.setColorAt(0.8, c)
+                        gradient.setColorAt(1, c.darker(140))
+                    elif stone_type_name == "MIRROR":
+                        gradient.setColorAt(0, QColor("#FFFFFF"))
+                        gradient.setColorAt(0.3, QColor("#F0F0F0"))
+                        gradient.setColorAt(0.7, QColor("#C0C0C0"))
+                        gradient.setColorAt(1, QColor("#808080"))
+                    elif stone_type_name == "SPLITTER":
+                        gradient.setColorAt(0, QColor("#FFEB3B"))
+                        gradient.setColorAt(0.4, QColor("#FFC107"))
+                        gradient.setColorAt(0.8, QColor("#FF8F00"))
+                        gradient.setColorAt(1, QColor("#E65100"))
+                    else:
+                        gradient.setColorAt(0, c.lighter(150))
+                        gradient.setColorAt(1, c)
             else:
                 gradient.setColorAt(0, QColor("#FFFFFF"))
                 gradient.setColorAt(1, QColor("#E0E0E0"))
@@ -601,8 +628,8 @@ class GameBoard(QGraphicsView):
         stone_group.setPos(center_x, center_y)
         stone_group.setZValue(1)
 
-        # Enhanced 3D effects for Real Stones theme
-        if self.current_theme == "Real Stone" and use_texture:
+        # Enhanced 3D effects for Real Stones theme (applies to ALL stone types)
+        if self.current_theme == "Real Stone":
             effects_config = self.stone_3d_config
             
             # Shadow for 3D depth - Enhanced for Real Stones
@@ -723,6 +750,17 @@ class GameBoard(QGraphicsView):
              h_line.setZValue(2)
              v_line.setZValue(2)
         
+        elif stone_type_name == "BLOCKER":
+             # X cross to indicate absorption / blocking
+             cross_size = 5
+             x_line1 = QGraphicsLineItem(-cross_size, -cross_size, cross_size, cross_size, stone_group)
+             x_line2 = QGraphicsLineItem(-cross_size, cross_size, cross_size, -cross_size, stone_group)
+             blocker_pen = QPen(QColor("#FF4444") if player == 1 else QColor("#4444FF"), 2)
+             x_line1.setPen(blocker_pen)
+             x_line2.setPen(blocker_pen)
+             x_line1.setZValue(2)
+             x_line2.setZValue(2)
+        
         self.stone_items[pos] = stone_group
 
     def rotate_stone_to(self, pos, angle):
@@ -733,6 +771,24 @@ class GameBoard(QGraphicsView):
             
             item = self.stone_items[pos]
             item.setRotation(angle)
+
+    def move_stone_visual(self, from_pos, to_pos):
+        """Move a stone visual from one grid position to another.
+        
+        Args:
+            from_pos: (x, y) source position
+            to_pos: (x, y) destination position (already wrapped)
+        """
+        if from_pos in self.stone_items:
+            # Remove old visual
+            self.scene.removeItem(self.stone_items[from_pos])
+            del self.stone_items[from_pos]
+        
+        # Redraw at new position
+        stone = self.board_state.get_stone_at(to_pos)
+        if stone:
+            self._draw_stone(to_pos, stone.stone_type.name, stone.player)
+            self.rotate_stone_to(to_pos, stone.rotation_angle)
 
     def shoot_laser(self, start_pos, direction, player=1):
         """Shoot a laser and visualize the path."""

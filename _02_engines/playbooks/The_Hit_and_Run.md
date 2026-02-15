@@ -1,4 +1,4 @@
-# Playbook: The Laser Web
+# Playbook: The Hit and Run
 
 ## Game Mode Configuration
 - **Mode**: 100% Territory (Total Domination)
@@ -10,12 +10,14 @@
 - **Modes Available**: Turn-Based (classic), Realtime (velocity-based movement)
 
 ## Strategy Overview
-**Maximize beam intersections for stability.**
+**Move into firing position, fire, then retreat.**
 
 ## Core Tactics
-- Create a 'net' pattern.
-- Ensure every stone is hit by at least two lasers.
-- Hard to disrupt.
+- Keep stones safe in your territory.
+- Dash out (Move) to a firing spot.
+- Shoot the laser.
+- Dash back (Move) to safety before they can retaliate.
+- Guerrilla warfare.
 
 ## Execution Plan for 39x39 Grid
 1.  **Early Game (0-10 mins)**: Establish the pattern foundation. Do not worry about energy costs.

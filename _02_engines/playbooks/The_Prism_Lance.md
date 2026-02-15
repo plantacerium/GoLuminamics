@@ -1,4 +1,4 @@
-# Playbook: The Laser Web
+# Playbook: The Prism Lance
 
 ## Game Mode Configuration
 - **Mode**: 100% Territory (Total Domination)
@@ -10,12 +10,13 @@
 - **Modes Available**: Turn-Based (classic), Realtime (velocity-based movement)
 
 ## Strategy Overview
-**Maximize beam intersections for stability.**
+**Long-range beaming using aligned Prisms.**
 
 ## Core Tactics
-- Create a 'net' pattern.
-- Ensure every stone is hit by at least two lasers.
-- Hard to disrupt.
+- Align 3+ PRISMS in a straight line.
+- Use a MIRROR at the end to correct the final angle.
+- Create a beam that traverses the entire board length.
+- Snipe high-value targets across the map.
 
 ## Execution Plan for 39x39 Grid
 1.  **Early Game (0-10 mins)**: Establish the pattern foundation. Do not worry about energy costs.

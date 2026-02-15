@@ -1,4 +1,4 @@
-# Playbook: The Laser Web
+# Playbook: The Beam Surgeon
 
 ## Game Mode Configuration
 - **Mode**: 100% Territory (Total Domination)
@@ -10,12 +10,13 @@
 - **Modes Available**: Turn-Based (classic), Realtime (velocity-based movement)
 
 ## Strategy Overview
-**Maximize beam intersections for stability.**
+**Precise, surgical shots to snipe enemy stones without blocked by own.**
 
 ## Core Tactics
-- Create a 'net' pattern.
-- Ensure every stone is hit by at least two lasers.
-- Hard to disrupt.
+- Use minimal stones to keep firing lines clear.
+- Rotate stones precisely to thread the needle.
+- Target enemy Mirrors first to disable their defense.
+- Prioritize safe shots over risky captures.
 
 ## Execution Plan for 39x39 Grid
 1.  **Early Game (0-10 mins)**: Establish the pattern foundation. Do not worry about energy costs.

@@ -1,4 +1,4 @@
-# Playbook: The Laser Web
+# Playbook: The Shadow Dancer
 
 ## Game Mode Configuration
 - **Mode**: 100% Territory (Total Domination)
@@ -10,12 +10,13 @@
 - **Modes Available**: Turn-Based (classic), Realtime (velocity-based movement)
 
 ## Strategy Overview
-**Maximize beam intersections for stability.**
+**Constantly moving stones to stay in 'dark' tiles to avoid detection/hits.**
 
 ## Core Tactics
-- Create a 'net' pattern.
-- Ensure every stone is hit by at least two lasers.
-- Hard to disrupt.
+- Analyze the board for unlit 'dark' tiles.
+- Move stones ONLY into these safe zones.
+- If a tile becomes lit, move immediately.
+- Survival is the highest priority.
 
 ## Execution Plan for 39x39 Grid
 1.  **Early Game (0-10 mins)**: Establish the pattern foundation. Do not worry about energy costs.

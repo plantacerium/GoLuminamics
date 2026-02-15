@@ -13,6 +13,7 @@ class StoneType(Enum):
     PRISM = 1
     MIRROR = 2
     SPLITTER = 3
+    BLOCKER = 4
 
 class StoneData2D:
     """Represents a stone's logical state in 2D."""
@@ -20,6 +21,7 @@ class StoneData2D:
         self.stone_type = stone_type
         self.rotation_angle = 0.0  # Rotation in degrees (0-360)
         self.player = player  # 1 or 2
+        self.velocity = 1  # Moves per tick in realtime mode
     
     def set_rotation(self, angle):
         """Set rotation angle."""
@@ -215,6 +217,8 @@ class BoardState2D:
             sType = StoneType.MIRROR
         elif stone_type_name == "SPLITTER":
             sType = StoneType.SPLITTER
+        elif stone_type_name == "BLOCKER":
+            sType = StoneType.BLOCKER
         
         # Spend energy (if not infinite) and place stone
         if not self.infinite_energy:
@@ -243,6 +247,74 @@ class BoardState2D:
     def get_stone_at(self, pos_tuple):
         """Get stone at position."""
         return self.stones.get(pos_tuple)
+    
+    def move_stone(self, from_pos, to_pos):
+        """Move a stone from one position to another with board wrapping.
+        
+        Args:
+            from_pos: (x, y) source position
+            to_pos: (x, y) target position (will be wrapped)
+        
+        Returns:
+            Wrapped (x, y) position if successful, None otherwise
+        """
+        if from_pos not in self.stones:
+            return None
+        
+        # Wrap coordinates using modular arithmetic
+        wrapped_x = to_pos[0] % self.grid_size
+        wrapped_y = to_pos[1] % self.grid_size
+        wrapped_pos = (wrapped_x, wrapped_y)
+        
+        # Cannot move to occupied cell
+        if wrapped_pos in self.stones and wrapped_pos != from_pos:
+            return None
+        
+        # Move the stone
+        stone = self.stones.pop(from_pos)
+        self.stones[wrapped_pos] = stone
+        self.reset_passes()
+        return wrapped_pos
+    
+    def move_stone_along_curve(self, from_pos, control_points, player):
+        """Move a stone along a Bezier curve path.
+        
+        Args:
+            from_pos: (x, y) starting position
+            control_points: List of (x, y) control points defining the curve.
+                           For quadratic Bezier: [control_point, end_point]
+                           For cubic Bezier: [control1, control2, end_point]
+            player: Player who owns the stone
+        
+        Returns:
+            Final wrapped (x, y) position if successful, None otherwise
+        """
+        if from_pos not in self.stones:
+            return None
+        stone = self.stones[from_pos]
+        if stone.player != player:
+            return None
+        
+        # The final destination is the last control point
+        if not control_points:
+            return None
+        
+        end_point = control_points[-1]
+        
+        # Wrap the final position
+        wrapped_x = int(round(end_point[0])) % self.grid_size
+        wrapped_y = int(round(end_point[1])) % self.grid_size
+        final_pos = (wrapped_x, wrapped_y)
+        
+        # Cannot move to occupied cell
+        if final_pos in self.stones and final_pos != from_pos:
+            return None
+        
+        # Move the stone to final position
+        s = self.stones.pop(from_pos)
+        self.stones[final_pos] = s
+        self.reset_passes()
+        return final_pos
     
     def add_laser_source(self, pos, direction, player=1):
         """Add a laser source with player ownership."""

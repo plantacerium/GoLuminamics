@@ -18,7 +18,7 @@ GoLuminamics is a **strategic territory control game** that combines the depth o
 
 ### ✨ Key Features
 
-- 🔮 **Three Stone Types**: Prisms (transmit), Mirrors (reflect), Splitters (branch)
+- 🔮 **Four Stone Types**: Prisms (transmit), Mirrors (reflect), Splitters (branch), Blockers (block)
 - ⚡ **Real-Time Laser Physics**: Watch beams bounce, split, and illuminate the board
 - 📐 **Adjustable Board Size**: 9×9 to 39×39 grids for different game lengths
 - ♾️ **Flexible Game Modes**: Infinite energy, infinite score (no mercy rule), customizable timers
@@ -58,11 +58,10 @@ python -m _00_entry.main_game
 
 # Launch the replayer
 python -m _00_entry.main_replayer
+
 # Launch the AI Arena (Spectator Mode)
 python -m _00_entry.arena_ui
 ```
-
----
 
 ### 🤖 AI Arena CLI Arguments
 ```bash
@@ -75,6 +74,7 @@ python -m _00_entry.arena_ui --p1 llama3 --p2 gemma3:4b
 # Single Strategy Mode (Faster context)
 python -m _00_entry.arena_ui --single-strategy
 ```
+
 
 
 
@@ -160,5 +160,3 @@ For information about third-party dependencies and their licenses, please see [T
 ⭐ **Star us on GitHub** if you enjoy the game! ⭐
 
 </div>
-
-

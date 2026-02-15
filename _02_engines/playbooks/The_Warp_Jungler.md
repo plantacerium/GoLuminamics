@@ -1,4 +1,4 @@
-# Playbook: The Laser Web
+# Playbook: The Warp Jungler
 
 ## Game Mode Configuration
 - **Mode**: 100% Territory (Total Domination)
@@ -10,12 +10,13 @@
 - **Modes Available**: Turn-Based (classic), Realtime (velocity-based movement)
 
 ## Strategy Overview
-**Maximize beam intersections for stability.**
+**Heavy use of edge-wrapping to traverse the board instantly.**
 
 ## Core Tactics
-- Create a 'net' pattern.
-- Ensure every stone is hit by at least two lasers.
-- Hard to disrupt.
+- constantly move between x=0 and x=38.
+- Appear on the left, then instantly on the right.
+- Disorient the opponent's spatial awareness.
+- Maintain high velocity to stay unpredictable.
 
 ## Execution Plan for 39x39 Grid
 1.  **Early Game (0-10 mins)**: Establish the pattern foundation. Do not worry about energy costs.

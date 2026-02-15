@@ -1,4 +1,4 @@
-# Playbook: The Laser Web
+# Playbook: The Orbital Strike
 
 ## Game Mode Configuration
 - **Mode**: 100% Territory (Total Domination)
@@ -10,12 +10,13 @@
 - **Modes Available**: Turn-Based (classic), Realtime (velocity-based movement)
 
 ## Strategy Overview
-**Maximize beam intersections for stability.**
+**Rotating stones around a target to find a firing angle.**
 
 ## Core Tactics
-- Create a 'net' pattern.
-- Ensure every stone is hit by at least two lasers.
-- Hard to disrupt.
+- Choose a target enemy stone.
+- Move your PRISM/MIRROR in a circle around it.
+- Stop when a clear line of fire opens up.
+- Shoot and then move again.
 
 ## Execution Plan for 39x39 Grid
 1.  **Early Game (0-10 mins)**: Establish the pattern foundation. Do not worry about energy costs.

@@ -1,4 +1,4 @@
-# Playbook: The Laser Web
+# Playbook: The Kiting Guard
 
 ## Game Mode Configuration
 - **Mode**: 100% Territory (Total Domination)
@@ -10,12 +10,13 @@
 - **Modes Available**: Turn-Based (classic), Realtime (velocity-based movement)
 
 ## Strategy Overview
-**Maximize beam intersections for stability.**
+**Keeping a defensive stone at exactly range 2 from enemy advancers.**
 
 ## Core Tactics
-- Create a 'net' pattern.
-- Ensure every stone is hit by at least two lasers.
-- Hard to disrupt.
+- Maintain a safe distance from enemy 'Phalanx'.
+- Retreat as they advance, but stay in laser range.
+- Punish their overextension.
+- Draw them into a trap deep in your territory.
 
 ## Execution Plan for 39x39 Grid
 1.  **Early Game (0-10 mins)**: Establish the pattern foundation. Do not worry about energy costs.

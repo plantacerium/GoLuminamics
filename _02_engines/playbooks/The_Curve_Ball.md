@@ -1,4 +1,4 @@
-# Playbook: The Laser Web
+# Playbook: The Curve Ball
 
 ## Game Mode Configuration
 - **Mode**: 100% Territory (Total Domination)
@@ -10,12 +10,13 @@
 - **Modes Available**: Turn-Based (classic), Realtime (velocity-based movement)
 
 ## Strategy Overview
-**Maximize beam intersections for stability.**
+**Using Bézier curves to move stones around obstacles.**
 
 ## Core Tactics
-- Create a 'net' pattern.
-- Ensure every stone is hit by at least two lasers.
-- Hard to disrupt.
+- Do not move in straight lines.
+- Use CURVE_MOVE to arc around BLOCKERS.
+- Flank shielded enemies from the side.
+- Use movement as a weapon.
 
 ## Execution Plan for 39x39 Grid
 1.  **Early Game (0-10 mins)**: Establish the pattern foundation. Do not worry about energy costs.

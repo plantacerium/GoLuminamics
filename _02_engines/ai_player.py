@@ -111,7 +111,8 @@ class AIAgent:
         
         laser_actions = [a for a in valid_actions if a['type'] == 'laser']
         if laser_actions:
-            sample.append(random.choice(laser_actions))
+            # Prioritize laser actions in the sample
+            sample.extend(random.sample(laser_actions, min(3, len(laser_actions))))
             
         return valid_actions, json.dumps(sample)
 
@@ -148,6 +149,12 @@ class AIAgent:
             directive = "VAS PERDIENDO: ¡Riesgo necesario! Busca capturas con láser o expande agresivamente."
         else:
             directive = "ESTADO EQUILIBRADO: Busca una apertura táctica o línea de tiro clara."
+
+        # Tactical Insight: Specifically check for laser shots that score
+        laser_actions = server.get_valid_actions().get("valid_actions", [])
+        score_potential = [a for a in laser_actions if a['type'] == 'laser']
+        if score_potential:
+            directive += "\n¡OPORTUNIDAD DE DISPARO! Tienes acciones de LÁSER disponibles. Úsalas para puntuar o capturar."
 
         return f"""
         MIS PIEZAS (Jugador {self.player_id}):
@@ -196,9 +203,11 @@ class AIAgent:
         {valid_sample}
         
         TU MISIÓN:
-        1. Analiza el tablero. Busca capturar piezas enemigas o proteger tu territorio.
-        2. Selecciona UNA acción válida.
-        3. ¡NO PASAR! Debes jugar una ficha o disparar. El 'pass' está prohibido si hay opciones.
+        1. El LÁSER es tu fuente principal de puntos. Disparar el láser finaliza tu territorio e incrementa tu puntuación.
+        2. Analiza el tablero. Si puedes disparar un LÁSER que cruce tus piezas y capture piezas enemigas, HAZLO.
+        3. Colocar fichas es PREPARACIÓN. Solo coloca fichas si no tienes un disparo de láser efectivo este turno.
+        4. Selecciona UNA acción válida.
+        5. ¡NO PASAR! Debes jugar una ficha o disparar. El 'pass' está prohibido si hay opciones.
         
         FORMATO DE RESPUESTA (JSON PURO):
         Incluye un campo "thought" para explicar tu razonamiento táctico.
