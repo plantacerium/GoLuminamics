@@ -102,6 +102,10 @@ class GameBoard(QGraphicsView):
         # Rotation State
         self.is_rotating = False
         self.rotating_stone_pos = None
+
+        # Selection State
+        self.selected_stone_pos = None
+        self.selection_item = None
         
         # Current stone type to place
         self.current_stone_type = "PRISM"
@@ -797,7 +801,204 @@ class GameBoard(QGraphicsView):
             self.scene.removeItem(item)
         self.laser_items.clear()
         
-        # Add to board state for scoring
+        # Add to board state for scoring? No, board_state calculates on demand.
+        # But we need to update laser sources in board state for persistence/re-drawing?
+        # The main_game calls calculate_score which uses board_state.laser_sources.
+        # We should update board_state.laser_sources if this is a permanent laser?
+        # For now, let's assume this visualizer is for transient shots or the loop in main_game handles it.
+        # Actually, main_game calls board.shoot_laser.
+        # Let's see if we need to return captured stones.
+        
+        from _02_engines.laser import LaserCalculator2D
+        # Use existing calculator
+        paths = self.laser_calc.calculate_path(start_pos, direction, self.board_state.stones)
+        
+        # Draw paths
+        laser_color = QColor("#FF0000") if player == 1 else QColor("#0000FF")
+        pen = QPen(laser_color, 3)
+        
+        for path in paths:
+            # Draw line segments
+            if len(path) >= 2:
+                for i in range(len(path) - 1):
+                    p1 = path[i]
+                    p2 = path[i+1]
+                    
+                    # Scale to scene
+                    x1 = self.margin_horizontal + p1[0] * self.cell_size
+                    y1 = self.margin_vertical + p1[1] * self.cell_size
+                    x2 = self.margin_horizontal + p2[0] * self.cell_size
+                    y2 = self.margin_vertical + p2[1] * self.cell_size
+                    
+                    line = self.scene.addLine(x1, y1, x2, y2, pen)
+                    line.setZValue(5) # Above stones
+                    self.laser_items.append(line)
+        
+        # Calculate captures (logic needed here or in board_state)
+        # We delegate capture logic to board_state to keep it central
+        captured = self.board_state.process_laser_captures(player, paths)
+        
+        # Update visuals for captured stones
+        for pos in captured:
+            if pos in self.stone_items:
+                self.scene.removeItem(self.stone_items[pos])
+                del self.stone_items[pos]
+                
+        return captured
+
+    # --- Mouse & Keyboard Interaction ---
+
+    def keyPressEvent(self, event):
+        """Handle keyboard input for movement."""
+        if not self.selected_stone_pos:
+            super().keyPressEvent(event)
+            return
+
+        key = event.key()
+        dx, dy = 0, 0
+        
+        if key in (Qt.Key_W, Qt.Key_Up):
+            dy = -1
+        elif key in (Qt.Key_S, Qt.Key_Down):
+            dy = 1
+        elif key in (Qt.Key_A, Qt.Key_Left):
+            dx = -1
+        elif key in (Qt.Key_D, Qt.Key_Right):
+            dx = 1
+        else:
+            super().keyPressEvent(event)
+            return
+
+        self.move_selected_stone(dx, dy)
+
+    def move_selected_stone(self, dx, dy):
+        """Attempt to move the selected stone by delta (dx, dy)."""
+        if not self.selected_stone_pos:
+            return
+
+        current_pos = self.selected_stone_pos
+        stone = self.board_state.stones.get(current_pos)
+        
+        # Security check: only move own stones (unless in debug/replayer? assume standard rules)
+        if not stone or stone.player != self.current_player:
+            return
+
+        # Calculate target position (wrapping logic handled by board_state, 
+        # but we need to pass strict 'to' coordinate to move_stone if it handles wrapping, 
+        # OR calculate wrapped 'to' coordinate here.
+        # board_state.move_stone documentation says: "to_pos: target position (will be wrapped)"
+        # So we can pass the raw coordinate.
+        
+        target_x = current_pos[0] + dx
+        target_y = current_pos[1] + dy
+        
+        # Execute move in board logic
+        new_pos = self.board_state.move_stone(current_pos, (target_x, target_y))
+        
+        if new_pos:
+            # Update Visuals
+            self.move_stone_visual(current_pos, new_pos)
+            
+            # Update Selection
+            self.selected_stone_pos = new_pos
+            self._update_selection_visual()
+            
+            # Emit signal/Take energy?
+            # Creating a custom signal for movement might be useful for recording, 
+            # but main_game records placements/lasers.
+            # We should probably trigger an 'energy spend' or 'turn end' if this counts as a move.
+            # IN REALTIME MODE: Movement costs nothing (time/velocity based).
+            # IN TURN BASED: Movement usually takes a turn? The original rules say "Place" or "Rotate".
+            # Moving is a new action introduced for RealTime/Advanced play.
+            # For now, we assume this is allowed. If turn-based, it might consume the turn.
+            
+            # Let's emit a 'stone_moved' signal if we want main_game to record it?
+            # Added signal at class level: stone_placed, stone_rotated... 
+            # I should add 'stone_moved' signal.
+            pass
+
+    def mousePressEvent(self, event):
+        """Handle mouse interaction for placement, laser aiming, selection, and rotation."""
+        # Ensure we have focus for keyboard events
+        self.setFocus()
+        
+        if event.button() == Qt.LeftButton:
+            self.drag_start_pos = event.pos()
+            self.drag_start_scene = self.mapToScene(event.pos())
+            self.is_aiming = False
+            
+            # Check if clicked on a stone or border
+            grid_pos = self._get_grid_pos(self.drag_start_scene)
+            
+            if grid_pos:
+                if grid_pos in self.board_state.stones:
+                    # Clicked on existing stone
+                    stone = self.board_state.stones[grid_pos]
+                    
+                    # If it's our stone, select it
+                    if stone.player == self.current_player:
+                        self.selected_stone_pos = grid_pos
+                        self._update_selection_visual()
+                    else:
+                        # Deselect if clicked opponent stone (or keep? let's deselect)
+                        self.selected_stone_pos = None
+                        self._update_selection_visual()
+                        
+                    self.aiming_source = grid_pos
+                    self.aiming_type = "internal"
+                else:
+                    # Clicked on empty space
+                    self.selected_stone_pos = None # Deselect
+                    self._update_selection_visual()
+                    
+                    self.aiming_source = None
+                    self.aiming_type = "placement"
+            else:
+                self.selected_stone_pos = None # Deselect
+                self._update_selection_visual()
+                
+                self.aiming_source = self._get_border_pos(self.drag_start_scene)
+                self.aiming_type = "external" if self.aiming_source else None
+
+        elif event.button() == Qt.RightButton:
+            # Right click -> Start Rotation Drag
+            scene_pos = self.mapToScene(event.pos())
+            grid_pos = self._get_grid_pos(scene_pos)
+            if grid_pos and grid_pos in self.board_state.stones:
+                self.rotating_stone_pos = grid_pos
+                self.is_rotating = True
+                self.setCursor(Qt.ClosedHandCursor)
+                # Right click also selects? Maybe not to avoid conflict.
+                # self.selected_stone_pos = grid_pos
+                # self._update_selection_visual()
+
+        # Call parent QGraphicsView mouse event to handle potential drag items if any (we don't use them heavily)
+        # But we do need to call super implementation for general housekeeping
+        super(QGraphicsView, self).mousePressEvent(event)   
+
+    def _update_selection_visual(self):
+        """Draw selection ring around selected stone."""
+        # Check if we have a selection item already
+        if hasattr(self, 'selection_item') and self.selection_item:
+            self.scene.removeItem(self.selection_item)
+            self.selection_item = None
+            
+        if self.selected_stone_pos:
+            x, y = self.selected_stone_pos
+            center_x = self.margin_horizontal + x * self.cell_size
+            center_y = self.margin_vertical + y * self.cell_size
+            radius = self.cell_size / 2 + 2 # Slightly larger than stone
+            
+            pen = QPen(QColor("#00FF00"), 3) # bright green selection
+            pen.setStyle(Qt.DotLine)
+            
+            self.selection_item = self.scene.addEllipse(
+                center_x - radius, center_y - radius,
+                radius * 2, radius * 2,
+                pen, Qt.NoBrush
+            )
+            self.selection_item.setZValue(10)
+
         self.board_state.add_laser_source(start_pos, direction, player)
         self.board_state.reset_passes() # Valid move resets pass counter
         
