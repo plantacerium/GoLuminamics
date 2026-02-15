@@ -122,6 +122,9 @@ class AIAgent:
         curve_actions = [a for a in valid_actions if a['type'] == 'curve_move']
         if curve_actions:
             sample.extend(random.sample(curve_actions, min(3, len(curve_actions))))
+        
+        # Add selection example
+        sample.append({"type": "select", "positions": [[3, 3], [4, 4], [5, 5]]})
             
         return valid_actions, json.dumps(sample)
 
@@ -134,6 +137,10 @@ class AIAgent:
 
         my_stones = []
         opp_stones = []
+        
+        # Current Selection
+        current_selection = getattr(server, 'selection', [])
+        selection_str = f"SELECCIÓN ACTUAL: {current_selection}" if current_selection else "NINGUNA SELECCIÓN ACTIVA."
         
         # BUG FIX: Use rotation_angle instead of angle
         for pos, stone in server.board.stones.items():
@@ -171,6 +178,8 @@ class AIAgent:
         
         PIEZAS ENEMIGAS (Oponente):
         {opp_stones_str}
+        
+        {selection_str}
         
         ENERGÍA: Yo({server.board.player_energy[self.player_id]}), Oponente({server.board.player_energy[3-self.player_id]})
         PUNTUACIÓN TERRITORIO: Yo({my_score}), Oponente({opp_score})
@@ -215,14 +224,22 @@ class AIAgent:
         1. El LÁSER es tu fuente principal de puntos. Disparar el láser finaliza tu territorio e incrementa tu puntuación.
         2. Analiza el tablero. Si puedes disparar un LÁSER que cruce tus piezas y capture piezas enemigas, HAZLO.
         3. Colocar fichas es PREPARACIÓN. Solo coloca fichas si no tienes un disparo de láser efectivo este turno.
-        4. MOVIMIENTO (REAL-TIME): Puedes mover tus fichas para mejorar posición o esquivar disparos.
+        4. SELECCIÓN (SELECT): Puedes resaltar piezas antes de moverlas o para indicar foco.
+           - "type": "select", "positions": [[x1, y1], [x2, y2]]
+           - Esto NO termina tu turno. Úsalo para "pensar visualmente" o preparar un movimiento complejo.
+        5. MOVIMIENTO (REAL-TIME): Puedes mover tus fichas para mejorar posición o esquivar disparos.
            - Move (Lineal): Movimiento directo.
            - Curve Move (Bezier): Movimiento en arco, impredecible y útil para esquivar.
-        5. Selecciona UNA acción válida.
-        6. ¡NO PASAR! Debes jugar una ficha o disparar. El 'pass' está prohibido si hay opciones.
+        6. Selecciona UNA acción válida.
+        7. ¡NO PASAR! Debes jugar una ficha o disparar. El 'pass' está prohibido si hay opciones.
         
         FORMATO DE RESPUESTA (JSON PURO):
         Incluye un campo "thought" para explicar tu razonamiento táctico.
+        
+        {{
+          "thought": "Selecciono mis prismas para evaluar líneas de tiro...",
+          "type": "select", "positions": [[2, 2], [2, 5]]
+        }}
         
         {{
           "thought": "Basado en PUNTUACIÓN y PIEZAS ENEMIGAS, decido que...",
