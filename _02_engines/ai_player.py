@@ -113,6 +113,15 @@ class AIAgent:
         if laser_actions:
             # Prioritize laser actions in the sample
             sample.extend(random.sample(laser_actions, min(3, len(laser_actions))))
+
+        # Add movement examples (Linear & Curve)
+        move_actions = [a for a in valid_actions if a['type'] == 'move']
+        if move_actions:
+            sample.extend(random.sample(move_actions, min(3, len(move_actions))))
+            
+        curve_actions = [a for a in valid_actions if a['type'] == 'curve_move']
+        if curve_actions:
+            sample.extend(random.sample(curve_actions, min(3, len(curve_actions))))
             
         return valid_actions, json.dumps(sample)
 
@@ -206,8 +215,11 @@ class AIAgent:
         1. El LÁSER es tu fuente principal de puntos. Disparar el láser finaliza tu territorio e incrementa tu puntuación.
         2. Analiza el tablero. Si puedes disparar un LÁSER que cruce tus piezas y capture piezas enemigas, HAZLO.
         3. Colocar fichas es PREPARACIÓN. Solo coloca fichas si no tienes un disparo de láser efectivo este turno.
-        4. Selecciona UNA acción válida.
-        5. ¡NO PASAR! Debes jugar una ficha o disparar. El 'pass' está prohibido si hay opciones.
+        4. MOVIMIENTO (REAL-TIME): Puedes mover tus fichas para mejorar posición o esquivar disparos.
+           - Move (Lineal): Movimiento directo.
+           - Curve Move (Bezier): Movimiento en arco, impredecible y útil para esquivar.
+        5. Selecciona UNA acción válida.
+        6. ¡NO PASAR! Debes jugar una ficha o disparar. El 'pass' está prohibido si hay opciones.
         
         FORMATO DE RESPUESTA (JSON PURO):
         Incluye un campo "thought" para explicar tu razonamiento táctico.
@@ -220,6 +232,8 @@ class AIAgent:
         Otras acciones:
         {{ "type": "rotate", "x": 5, "y": 5, "angle": 90 }}
         {{ "type": "laser", "x": 5, "y": 5, "dx": 1, "dy": 0 }}
+        {{ "type": "move", "from_x": 2, "from_y": 2, "to_x": 2, "to_y": 3 }}
+        {{ "type": "curve_move", "from_x": 0, "from_y": 0, "control_x": 2.5, "control_y": 5.0, "end_x": 5, "end_y": 5 }}
         """
         
         # 1. Real Prompt (Full Content)
