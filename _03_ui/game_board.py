@@ -999,57 +999,7 @@ class GameBoard(QGraphicsView):
             )
             self.selection_item.setZValue(10)
 
-        self.board_state.add_laser_source(start_pos, direction, player)
-        self.board_state.reset_passes() # Valid move resets pass counter
-        
-        # Calculate paths
-        paths = self.laser_calc.calculate_path(start_pos, direction, self.board_state.stones)
-        
-        # Process captures (Option A: Direct hit)
-        captured = self.board_state.process_laser_captures(player, paths)
-        
-        # Remove captured stones visually
-        for pos in captured:
-            if pos in self.stone_items:
-                # Flash effect before removal
-                item = self.stone_items[pos]
-                # TODO: Add fade animation
-                self.scene.removeItem(item)
-                del self.stone_items[pos]
-        
-        # Draw laser paths
-        # Border pen (Player identity)
-        border_color = QColor("#000000") if player == 1 else QColor("#FFFFFF")
-        border_pen = QPen(border_color, 5)
-        border_pen.setCapStyle(Qt.RoundCap)
-        
-        # Core pen (Laser energy)
-        core_pen = QPen(QColor("#FF0000"), 3)
-        core_pen.setCapStyle(Qt.RoundCap)
-        
-        for path in paths:
-            for i in range(len(path) - 1):
-                p1 = path[i]
-                p2 = path[i + 1]
-                
-                x1 = self.margin_horizontal + p1[0] * self.cell_size
-                y1 = self.margin_vertical + p1[1] * self.cell_size
-                x2 = self.margin_horizontal + p2[0] * self.cell_size
-                y2 = self.margin_vertical + p2[1] * self.cell_size
-                
-                # Draw border (wider, below)
-                border_line = self.scene.addLine(x1, y1, x2, y2, border_pen)
-                border_line.setZValue(0.1) # Slightly above board
-                self.laser_items.append(border_line)
-                
-                # Draw core (thinner, above)
-                core_line = self.scene.addLine(x1, y1, x2, y2, core_pen)
-                core_line.setZValue(0.2) # Above border
-                self.laser_items.append(core_line)
-        
-        self.board_state.end_turn(player) # Recharge energy
-        self.end_turn() # Switch player
-        return captured  # Return captured stones for UI update
+
     
     def set_stone_type(self, stone_type):
         """Set the current stone type for placement."""
