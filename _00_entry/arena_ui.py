@@ -409,6 +409,20 @@ class ArenaWindow(MainWindow):
                 self.handle_laser_mouse(start, direction, self.board.current_player)
                 return True
 
+            elif action_type == "select":
+                positions = action.get("positions", [])
+                valid_positions = []
+                for p in positions:
+                    if isinstance(p, list) and len(p) == 2:
+                        valid_positions.append((p[0], p[1]))
+                        
+                if valid_positions:
+                    self.board.highlight_stones(valid_positions)
+                    print(f"SELECCIÓN: Resaltando {valid_positions}")
+                    # Do NOT call end_turn(), just return True so loop breaks and we wait for next tick
+                    return True
+                return False
+
             elif action_type == "pass":
                 return False 
                 

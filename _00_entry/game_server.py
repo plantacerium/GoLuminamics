@@ -56,6 +56,7 @@ class GameServer:
         self.game_over = False
         self.winner = None
         self.victory_reason = None
+        self.selection = [] # Store currently selected positions
         
         return {
             "observation": self._get_observation(),
@@ -79,8 +80,24 @@ class GameServer:
         player = self.current_player
         success = False
         reward = 0.0
+        turn_ended = True # Default to true for most actions
         
-        if action_type == "place":
+        if action_type == "select":
+            # Handle selection - does not end turn
+            positions = action.get("positions", [])
+            # Validate positions are on board
+            valid_positions = []
+            for p in positions:
+                if isinstance(p, list) and len(p) == 2:
+                     x, y = p
+                     if 0 <= x < self.grid_size and 0 <= y < self.grid_size:
+                         valid_positions.append((x, y))
+            
+            self.selection = valid_positions
+            success = True
+            turn_ended = False
+            
+        elif action_type == "place":
             x, y = action.get("x", 0), action.get("y", 0)
             stone_type = action.get("stone_type", "PRISM")
             success = self.board.place_stone((x, y), stone_type, player)
