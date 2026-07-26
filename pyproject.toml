@@ -1,0 +1,9 @@
+[project]
+name = "goluminamics"
+version = "0.1.0"
+description = "GoLuminamics is a strategic territory control game that combines the depth of Go with the physics of light."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "pyside6>=6.10.0,<7.0.0",
+]

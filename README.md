@@ -49,34 +49,30 @@ GoLuminamics is a **strategic territory control game** that combines the depth o
 
 ## 🚀 Quick Start
 
-```bash
-# Install dependencies
-pip install -r requirements.txt
+Install [uv](https://docs.astral.sh/uv/):
 
+```bash
 # Launch the game
-python -m _00_entry.main_game
+uv run -m _00_entry.main_game
 
 # Launch the replayer
-python -m _00_entry.main_replayer
+uv run -m _00_entry.main_replayer
 
 # Launch the AI Arena (Spectator Mode)
-python -m _00_entry.arena_ui
+uv run -m _00_entry.arena_ui
 ```
 
 ### 🤖 AI Arena CLI Arguments
 ```bash
 # Default run (All playbooks)
-python -m _00_entry.arena_ui
+uv run -m _00_entry.arena_ui
 
 # Specify Models
-python -m _00_entry.arena_ui --p1 llama3 --p2 gemma3:4b
+uv run -m _00_entry.arena_ui --p1 llama3 --p2 gemma3:4b
 
 # Single Strategy Mode (Faster context)
-python -m _00_entry.arena_ui --single-strategy
+uv run -m _00_entry.arena_ui --single-strategy
 ```
-
-
-
 
 ---
 
