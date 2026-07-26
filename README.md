@@ -49,6 +49,8 @@ GoLuminamics is a **strategic territory control game** that combines the depth o
 
 ## 🚀 Quick Start
 
+Install [uv](https://docs.astral.sh/uv/):
+
 ```bash
 # Launch the game
 uv run -m _00_entry.main_game
