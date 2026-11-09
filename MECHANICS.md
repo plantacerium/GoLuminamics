@@ -14,7 +14,7 @@
   - Player 1 (Black) - ID: 1
   - Player 2 (White) - ID: 2
 - **Turn System**: Alternating turns with pass option
-- **Control**: Mouse-based placement, rotation, and laser aiming
+- **Control**: Mouse-based placement, rotation, and laser aiming, with extensible keyboard shortcuts
 
 ---
 
@@ -33,246 +33,125 @@ Energy is checked before actions, consumed after successful placement, and recha
 
 ---
 
-## ⏳ Timer System
+## ⏳ Timer & Clock System
 
 ### Time Controls
 - **Total Game Timer**: Optional limit on total thinking time per player (configurable: 15m, 30m, 60m, or Infinite).
-- **Move Timer**: Fixed time limit for each individual turn (default: 30 seconds).
+- **Move Timer**: Fixed time limit for each individual turn (default: 30 or 80 seconds).
 
-### Timer Mechanics
-1. **Countdown**: Timers decrement in real-time while it is the player's turn.
-2. **Move Time**: Resets to the full limit (e.g., 30s) at the start of each turn.
-3. **Expiration**:
-   - **Move Timer**: If the move timer expires, the turn is automatically passed.
-   - **Total Timer**: If the total time limit is reached, the player loses the match.
+### Action-Activated Clock Mechanics (Idle Protection)
+1. **Startup Idle State**: Upon launching the UI or restarting a match, the game clock is completely paused in an idle state. Neither the Move Timer nor the Total Game Timer will decrement. This prevents unfair losses or accidental timeouts before players take action.
+2. **Activation Triggers**: The clock automatically activates as soon as any game action occurs:
+   - Placing a stone on an intersection
+   - Rotating a stone
+   - Firing a laser beam
+   - Moving a stone (linear or Bézier curve)
+   - Passing the turn
+   - Clicking **START AI MATCH** in the Arena
+3. **Turn Switching & Reset**: When a player completes their turn, their Move Timer resets to full capacity for the opponent.
+4. **Pause & Resume**: Pausing an AI match immediately halts the countdown without resetting remaining seconds.
+5. **Restarting**: Clicking **Restart Game** restores full initial timer allocations and returns the clock to its idle state.
+6. **Expiration**:
+   - **Move Timer**: If a player's move timer expires while active, the turn is automatically passed.
+   - **Total Timer**: If a player's total thinking time reaches zero, the opponent wins by timeout.
 
 ---
 
-## 🔮 Stone Types
+## 🔮 Stone Types & Modern Bottom HUD
 
-### Prism (Transmit)
-- **Symbol**: 🔺
+### Stone Selector Bottom HUD
+Stone selection is managed via a sleek, horizontal dock located directly below the board:
+- **Instant Hotkeys**: Press `1`, `2`, `3`, or `4` at any time to switch active piece types.
+- **Visual Feedback**: The active button illuminates with a glowing border matching the stone's optical color.
+- **Extensible Architecture**: Defined in `_03_ui/stone_hud.py` via `AVAILABLE_STONE_TYPES`. Developers can register new optical elements (such as Polarizers, Portals, or Sensors) with just a single dictionary entry.
+
+### 1. Prism (Transmit / Refract)
+- **Symbol**: ▲ | **Hotkey**: `1`
 - **Energy Cost**: 1
-- **Effect**: Transmits laser straight through, continues path
-- **Use Cases**: Creating direct laser paths, territory coverage
+- **Effect**: Transmits laser straight through or refracts at 45°/90° depending on alignment
+- **Use Cases**: Creating direct laser networks, territory coverage
 - **Strategic Value**: Essential for long-range illumination and captures
 
-### Mirror (Reflect)
-- **Symbol**: 📐
+### 2. Mirror (Reflect)
+- **Symbol**: ⬡ | **Hotkey**: `2`
 - **Energy Cost**: 1
-- **Effect**: Reflects laser at angle based on stone rotation
-- **Rotation**: 0-360° adjustable
-- **Use Cases**: Redirecting lasers, creating defensive walls, complex paths
-- **Strategic Value**: Highest tactical flexibility through rotation
+- **Effect**: Reflects laser at 90° based on stone rotation (0-360°)
+- **Use Cases**: Redirecting lasers around obstacles, creating perimeter reflection loops
+- **Strategic Value**: Highest tactical versatility through angle orientation
 
-### Splitter (Branch)
-- **Symbol**: 💎
+### 3. Splitter (Branch)
+- **Symbol**: ✦ | **Hotkey**: `3`
 - **Energy Cost**: 1
-- **Effect**: Splits laser into two beams, branching the path
-- **Use Cases**: Maximizing territory coverage, multi-target captures
-- **Strategic Value**: Territory maximization and area control
+- **Effect**: Splits an incoming laser beam into two simultaneous paths
+- **Use Cases**: Exponential territory coverage, multi-target simultaneous captures
+- **Strategic Value**: Multiplies board control from a single shot
 
-### Blocker (Absorb)
-- **Symbol**: 🧱
+### 4. Blocker (Absorb Wall)
+- **Symbol**: █ | **Hotkey**: `4`
 - **Energy Cost**: 1
-- **Effect**: Completely absorbs laser — no reflection, no transmission
-- **Use Cases**: Blocking opponent lasers, creating defensive walls
-- **Strategic Value**: Pure defense — stops all laser paths on contact
+- **Effect**: Completely absorbs laser rays on contact — no reflection, no transmission
+- **Use Cases**: Denying enemy shooting lanes, shielding critical friendly clusters
+- **Strategic Value**: Pure zone defense and shot interception
 
 ---
 
-## 🌟 Laser System
+## ⛶ Collapsible Paneling & Focus Mode
 
-### Laser Physics
-- **Entry Points**: Board edges (coordinates -1 or 19)
-- **Path Calculation**: Real-time physics using LaserCalculator2D
-- **Interactions**: 
-  - Prism: Continue straight through
-  - Mirror: Reflect at angle (depends on rotation)
-  - Splitter: Branch into two paths
-- **Termination**: Board edge, path limit, or **Blocker stone** reached
-
-### Laser Effects
-- **Territory Illumination**: Illuminated intersections count as territory
-- **Stone Captures**: Lasers hitting opponent stones destroy them (+2 points each)
-- **Visual Feedback**: Neon-style beam rendering with glow effects
-- **Path Display**: Full path visualization showing all reflections and splits
+### Architecture
+The interface layout utilizes a horizontal `QSplitter` separating the central viewport, controls, and AI thought streamer:
+- **Splitter Dragging**: Users can drag the vertical splitter bars to allocate custom screen real estate.
+- **`⛶ Modo Solo Tablero` (Focus Mode / `F11`)**: A single click collapses both the Controls panel and the Thought Streamer panel to 0 width. The board and Bottom HUD dynamically expand to take 100% of the window for distraction-free gameplay.
+- **Individual Sidebar Toggles**:
+  - `[ ⚙️ Controles ]`: Toggles the configuration and match settings panel.
+  - `[ 🧠 AI Thoughts ]`: Toggles the AI Thought Streamer panel in Arena mode.
 
 ---
 
-## ⚡ Realtime Mode
+## 🤖 AI Engines & MCP Protocol
 
-### Overview
-Optional game mode where **both players act simultaneously** with continuous movement.
+### 1. Optical Monte Carlo Tree Search (MCTS) Engine
+Located in `_02_engines/mcts.py`:
+- **Optical Resonance Pruning**: Filters the vast action space (>11,000 moves on 19×19) down to 20–40 high-utility candidates based on ray tracing lines of sight and angular symmetry.
+- **Ultra-Fast Cloning**: State memory cloning engine delivering over 420,000 board clones per second.
+- **Search Rate**: Explores ~5,000 full game simulations per second.
+- **CLI Usage**: Selectable in Arena mode via `--p1 mcts` or `--p2 mcts:500`.
 
-### How It Works
-- **Tick Rate**: 500ms per game tick
-- **Simultaneous Play**: Both players execute actions each tick (no alternating turns)
-- **Clock Start**: Game timer starts **only** when "START AI MATCH" is clicked
-- **Movement**: Stones can **move** to adjacent cells (8 directions + diagonals)
-- **Velocity**: Each stone has a velocity value (default 1) determining moves per tick
-
-### Movement Types
-
-#### Linear Movement
-- 8 directional movement (cardinal + diagonal)
-- Board **wraps around**: moving past one edge teleports to the opposite side
-
-#### Curved Movement (Bézier)
-- Stones can follow **real quadratic Bézier curves** through a control point
-- Action format: `{from, control_point, end_point}`
-- The stone's final position is the curve endpoint (wrapped to grid)
-
-### Realtime Rules
-- Placing, rotating, and shooting lasers all still work
-- `pass` actions are acceptable (stone stays still)
-- No turn-end penalty for failed actions
-
-## 🏆 Scoring System
-
-### Score Components
-1. **Territory Points**: Each illuminated intersection counts
-2. **Capture Points**: Each captured opponent stone worth +2 points
-3. **Contested Territory**: Intersections illuminated by both players don't count for either
-
-### Score Calculation
-```
-Player Score = Territory Illuminated + (Captures × 2)
-```
-
-Scoring is dynamic and recalculated after each laser shot. The replayer system tracks score progression over time.
+### 2. Live UI ⇄ MCP Agent Bridge
+Located in `_00_entry/live_bridge.py`:
+- Embeds a local JSON/HTTP bridge on port `18989`.
+- Allows AI coding agents (such as **Antigravity**) to read the visible board state (`luminamics_get_board_state`) and play moves (`luminamics_place_stone`, `luminamics_shoot_laser`) that render and animate directly on screen in real time.
+- Streams the agent's inner tactical reasoning directly into the **AI Thought Streamer** HUD.
 
 ---
 
-## 🎯 Victory Conditions
+## 🎮 Controls Reference
 
-### 1. Mutual Pass Victory
-- **Trigger**: Both players pass sequentially
-- **Winner**: Player with highest score
-- **Reason**: "Score Victory"
-
-### 2. Total Victory (Mercy Rule)
-- **Trigger 1**: Score difference > 50 points
-- **Trigger 2**: Control > Territory Threshold (configurable: 80%, 90%, or 100%)
-- **Default Setting**: 80% territory control
-- **Winner**: Dominant player
-- **Reason**: "Total Domination"
-- **Configuration**: Adjustable via "Victory" dropdown in game setup
-- **Note**: Can be disabled with **Infinite Score** mode
-
-### 3. Time-Based Victory
-- **Trigger**: Total time expires (when timer is set)
-- **Winner**: Player with highest score at time of expiration
-- **Reason**: "Time Expired"
-- **Note**: Primary victory mode when **Infinite Score** is enabled
-
-### 4. Surrender
-- **Trigger**: Player chooses to surrender (Esc → Surrender)
-- **Winner**: Opponent
-- **Reason**: "Opponent Surrendered"
-
-### Infinite Score Mode
-When **Infinite Score (No Mercy)** is enabled:
-- Mercy rule conditions (score difference >50, territory threshold) are disabled
-- Game continues until time expires, mutual pass, or surrender
-- Victory determined by final score comparison
+| Action | Key / Input |
+|:---|:---|
+| **Select Prism** | `1` or Click on Bottom HUD |
+| **Select Mirror** | `2` or Click on Bottom HUD |
+| **Select Splitter** | `3` or Click on Bottom HUD |
+| **Select Blocker** | `4` or Click on Bottom HUD |
+| **Toggle Focus Mode** | `F11` or `⛶ Solo Tablero` button |
+| **Toggle Controls** | `⚙️ Controles` button |
+| **Toggle AI Thoughts** | `🧠 AI Thoughts` button |
+| **Place Stone** | Left Click on empty intersection |
+| **Rotate Stone** | Right Click & Drag on existing stone |
+| **Fire Laser** | Drag from border / stone, or Space Bar |
+| **Pass Turn** | `P` key or Pass button |
+| **Undo Move** | `Ctrl+Z` |
+| **Save Game** | `Ctrl+S` |
+| **Surrender** | `Esc` → Surrender |
 
 ---
-
-## 🎨 Visual Themes
-
-### Classic Theme
-- **Player 1**: Red stones with red lasers
-- **Player 2**: Blue stones with blue lasers
-- **Style**: Solid color fills with depth shadows
-
-### Neon Theme
-- **Player 1**: Magenta stones with glowing effects
-- **Player 2**: Cyan stones with glowing effects
-- **Style**: Vibrant neon colors, enhanced glow
-
-### Pastel Theme
-- **Player 1**: Soft red stones
-- **Player 2**: Soft blue stones
-- **Style**: Muted, gentle color palette
-
-### Forest Theme
-- **Player 1**: Orange stones
-- **Player 2**: Green stones
-- **Style**: Nature-inspired earthy tones
-
-### Real Stones Theme
-- **Prism P1**: Ruby texture (`texture_ruby.png`)
-- **Prism P2**: Sapphire texture (`texture_sapphire.png`)
-- **Mirror**: Slate texture (`texture_slate.png`)
-- **Splitter**: Gold texture (`texture_gold.png`)
-- **Outlines**: P1=Black, P2=White
-- **Style**: Photorealistic stone textures with depth and rotation cues (notch/line)
-
----
-
-## 🎮 Controls
-
-### Mouse Controls
-| Action | Input |
-|--------|-------|
-| Place Stone | Left Click on intersection |
-| Rotate Stone | Right Click and Drag on stone |
-| Aim Laser | Click and drag from edge |
-| Release Laser | Release mouse button |
-| Manual Placement | Use side panel (X, Y, Rotation) |
-
-### Keyboard Controls
-| Action | Key |
-|--------|-----|
-| Rotate Stone | R key |
-| Fire Laser | Space bar |
-| Pass Turn | P key |
-| Undo Move | Ctrl+Z |
-| Save Game | Ctrl+S |
-| Surrender | Esc → Surrender |
-
-### Replayer Controls
-| Action | Key/Button |
-|--------|------------|
-| Next Move | Right Arrow / → button |
-| Previous Move | Left Arrow / ← button |
-| Play/Pause | Space / Play button |
-| Jump to First | Home / ⏮ button |
-| Jump to Last | End / ⏭ button |
-| Speed Control | Slider (0.5x - 2.0x) |
-
----
-
-## 📊 Game Recording System
-
-### Recording Features
-- **Auto-Save**: Games automatically saved to `games/` directory
-- **Format**: JSON with metadata and move history
-- **Data Captured**:
-  - Player names and strategies
-  - Complete move sequence (placements, rotations, lasers)
-  - Timestamps
-  - Final score and victory reason
-  - Capture history
-
-### Replay Features
-- **Visual Timeline**: Capture chart showing score progression
-- **Move-by-Move**: Step through entire game history
-- **Speed Control**: Adjustable playback speed
-- **Game Info**: Displays current turn, score, and move details
-
----
-
 
 ## 📝 Game Rules Summary
 
-1. **Setup**: Configurable board (9×9 to 39×39, default 19×19), both players start with 10 energy
-2. **Turns**: Alternate placing stones (1 energy, or free with Infinite Energy) or passing
-3. **Rotation**: Stones can be rotated 0-360° for mirrors
-4. **Lasers**: Fire from board edges, interact with stones
-5. **Captures**: Lasers destroy opponent stones (+2 points each)
-6. **Territory**: Illuminated intersections count toward score
-7. **Victory**: Time expires, mutual pass (highest score), total domination (unless Infinite Score enabled), or surrender
-8. **Energy**: +2 recharge per turn, max 20 (or unlimited with Infinite Energy)
-
+1. **Setup**: Configurable board (9×9 to 39×39, default 19×19), both players start with 10 energy. Clock remains idle until first move.
+2. **Turns**: Alternate placing stones (1 energy, or free with Infinite Energy) or passing.
+3. **Rotation**: Stones can be rotated 0-360° to direct laser reflections.
+4. **Lasers**: Fire from board edges or stones, interacting with optical pieces.
+5. **Captures**: Lasers destroy opponent stones (+2 points each).
+6. **Territory**: Illuminated intersections count toward persistent score.
+7. **Victory**: Mutual pass (highest score), total domination (unless Infinite Score enabled), timeout, or surrender.
+8. **Energy**: +2 recharge per turn, max 20 (or unlimited with Infinite Energy).
