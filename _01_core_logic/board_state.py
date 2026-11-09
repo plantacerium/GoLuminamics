@@ -96,6 +96,7 @@ class BoardState2D:
             "energy_cost": self.energy_cost,
             "player_energy": self.player_energy,
             "stones": stones_data,
+            "laser_sources": [[list(s[0]), list(s[1]), s[2]] for s in self.laser_sources],
             "player_captures": self.player_captures,
             "game_over": self.game_over,
             "winner": self.winner,
@@ -135,6 +136,10 @@ class BoardState2D:
         board.game_over = data.get("game_over", False)
         board.winner = data.get("winner", None)
         board.victory_reason = data.get("victory_reason", "")
+        
+        # Restore laser sources
+        laser_sources_data = data.get("laser_sources", [])
+        board.laser_sources = [(tuple(s[0]), tuple(s[1]), s[2]) for s in laser_sources_data]
         
         # Restore timers
         board.total_time_limit = data.get("total_time_limit", 0)
@@ -318,7 +323,12 @@ class BoardState2D:
     
     def add_laser_source(self, pos, direction, player=1):
         """Add a laser source with player ownership."""
-        self.laser_sources.append((pos, direction, player))
+        norm = (direction[0]**2 + direction[1]**2)**0.5
+        dir_norm = (direction[0]/norm, direction[1]/norm) if norm > 0 else (1.0, 0.0)
+        pos_norm = (float(pos[0]), float(pos[1]))
+        # Replace existing source from same origin position and player
+        self.laser_sources = [s for s in self.laser_sources if not (s[0] == pos_norm and s[2] == player)]
+        self.laser_sources.append((pos_norm, dir_norm, player))
     
     def clear_laser_sources(self):
         """Clear all laser sources."""
@@ -378,7 +388,8 @@ class BoardState2D:
                 stone = self.get_stone_at(grid_pos)
                 if stone and stone.player != player:
                     # Opponent stone hit by laser - capture it!
-                    captured_stones.append(grid_pos)
+                    if grid_pos not in captured_stones:
+                        captured_stones.append(grid_pos)
         
         # Remove captured stones and update capture count
         for pos in captured_stones:
@@ -417,11 +428,11 @@ class BoardState2D:
     def check_victory_condition(self):
         """Check for Total Victory (Mercy Rule). Skipped if infinite_score is True."""
         if self.game_over:
-            return
+            return {"winner": self.winner, "reason": self.victory_reason}
         
         # Skip mercy rule when infinite_score is enabled
         if self.infinite_score:
-            return
+            return None
             
         score = self.calculate_score()
         p1_score = score["player1"] + (self.player_captures[1] * 2)
@@ -435,7 +446,7 @@ class BoardState2D:
             self.game_over = True
             self.winner = 1 if p1_score > p2_score else 2
             self.victory_reason = "Total Victory (Score Difference > 50)"
-            return
+            return {"winner": self.winner, "reason": self.victory_reason}
             
         # Condition 2: > Territory Threshold Control (if at least 20 points on board)
         if total_territory > 20:
@@ -446,10 +457,13 @@ class BoardState2D:
                 self.game_over = True
                 self.winner = 1
                 self.victory_reason = f"Total Victory (>{int(self.territory_threshold*100)}% Territory)"
+                return {"winner": self.winner, "reason": self.victory_reason}
             elif p2_ratio > self.territory_threshold:
                 self.game_over = True
                 self.winner = 2
                 self.victory_reason = f"Total Victory (>{int(self.territory_threshold*100)}% Territory)"
+                return {"winner": self.winner, "reason": self.victory_reason}
+        return None
 
     def _determine_winner_by_score(self):
         """Determine winner based on current score."""
@@ -509,6 +523,8 @@ class BoardState2D:
         return {
             "player1": len(player1_territory),
             "player2": len(player2_territory),
+            1: len(player1_territory),
+            2: len(player2_territory),
             "contested": len(contested),
             "player1_points": player1_territory,
             "player2_points": player2_territory,
